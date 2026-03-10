@@ -1,0 +1,5 @@
+Google Calendar Reader is an NVDA add-on for Windows that helps blind and visually impaired users access their Google Calendar using keyboard shortcuts and speech output.
+
+The add-on allows users to sign in to Google Calendar, choose which calendars should be read, and hear upcoming events for today and the following days. It supports short and full reading modes and provides spoken information about events that are currently in progress.
+
+The add-on uses Google Calendar in read-only mode only. It does not create, edit, or delete events.
