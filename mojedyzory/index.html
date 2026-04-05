@@ -133,7 +133,7 @@
       <h2 id="wyniki-heading">Wyniki</h2>
       <p id="selectedDayText"></p>
       <div id="resultsList"></div>
-      <p><a id="backLink" href="index.html" class="top-link">Wróć do wyboru dnia</a></p>
+      <p><button id="backButton" type="button" class="top-link">Wróć do wyboru dnia</button></p>
     </section>
   </main>
 
@@ -272,7 +272,7 @@
     const warnBox = document.getElementById("warnBox");
     const selectedDayText = document.getElementById("selectedDayText");
     const resultsList = document.getElementById("resultsList");
-    const backLink = document.getElementById("backLink");
+    const backButton = document.getElementById("backButton");
 
     function setError(message) {
       if (!message) {
@@ -358,7 +358,6 @@
         });
       }
 
-      backLink.href = `index.html?day=${encodeURIComponent(selectedDate)}`;
       viewSelect.hidden = true;
       viewResults.hidden = false;
     }
@@ -407,6 +406,13 @@
       }
       setError("");
       renderResults(selectedDate);
+    });
+
+    backButton.addEventListener("click", () => {
+      viewResults.hidden = true;
+      viewSelect.hidden = false;
+      setError("");
+      daySelect.focus();
     });
 
     loadCsv();
