@@ -1,421 +1,124 @@
 <!doctype html>
 <html lang="pl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Moje dyżury</title>
-  <style>
-    :root {
-      --bg: #ffffff;
-      --text: #111111;
-      --muted: #555555;
-      --border: #cfcfcf;
-      --focus: #000000;
-      --error-bg: #fff4f4;
-      --error-border: #a30000;
-      --warn-bg: #fff9ef;
-      --warn-border: #9a5c00;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-    }
-    .wrap {
-      max-width: 52rem;
-      margin: 0 auto;
-      padding: 1rem;
-    }
-    .card {
-      border: 1px solid var(--border);
-      border-radius: 1rem;
-      padding: 1.25rem;
-      margin: 1rem 0;
-    }
-    h1, h2, h3 { margin-top: 0; }
-    label {
-      display: block;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-    }
-    select, button {
-      width: 100%;
-      font: inherit;
-      padding: 0.85rem 1rem;
-      border: 1px solid #777;
-      border-radius: 0.75rem;
-      background: #fff;
-      color: #000;
-    }
-    button {
-      cursor: pointer;
-      font-weight: 700;
-    }
-    button:focus, select:focus, a:focus {
-      outline: 3px solid var(--focus);
-      outline-offset: 2px;
-    }
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0,0,0,0);
-      white-space: nowrap;
-      border: 0;
-    }
-    .muted { color: var(--muted); }
-    .message {
-      border-radius: 0.75rem;
-      padding: 1rem;
-      margin-top: 1rem;
-    }
-    .error {
-      background: var(--error-bg);
-      border: 1px solid var(--error-border);
-    }
-    .warn {
-      background: var(--warn-bg);
-      border: 1px solid var(--warn-border);
-    }
-    .duty {
-      border: 1px solid var(--border);
-      border-radius: 0.75rem;
-      padding: 1rem;
-      margin-top: 1rem;
-    }
-    .row { margin-top: 0.75rem; }
-    .top-link {
-      display: inline-block;
-      margin-top: 1rem;
-    }
-    [hidden] { display: none !important; }
-  </style>
+<meta charset="utf-8">
+<title>Dyżury</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{font-family:sans-serif;padding:1rem;}
+.card{border:1px solid #ccc;padding:1rem;border-radius:1rem;}
+button,select,a{width:100%;margin-top:0.5rem;padding:0.7rem;}
+</style>
 </head>
 <body>
-  <main class="wrap">
-    <header class="card">
-      <h1>Moje dyżury</h1>
-      <p>
-        Aplikacja pokazuje dyżury od dnia dzisiejszego wzwyż. Nie da się wybrać wcześniejszego dnia.
-      </p>
-      <p class="muted">
-        Plik z grafikiem jest pobierany automatycznie z pliku <strong>grafik.csv</strong> znajdującego się w tym samym folderze co ta strona.
-      </p>
-    </header>
 
-    <section id="view-select" class="card" aria-labelledby="wybor-heading">
-      <h2 id="wybor-heading">Wybór dnia</h2>
+<div class="card">
+<h1>Wybór dnia</h1>
+<p id="status">Wczytywanie…</p>
 
-      <div class="row">
-        <p id="status-load" aria-live="polite">Wczytywanie grafiku…</p>
-      </div>
+<select id="sel"></select>
+<button id="btn">Pokaż</button>
 
-      <div class="row">
-        <label for="daySelect">Wybierz dzień</label>
-        <select id="daySelect" disabled></select>
-      </div>
+<div id="err"></div>
+</div>
 
-      <div class="row">
-        <button id="showButton" type="button" disabled>Pokaż</button>
-      </div>
+<script>
+function normalizeDate(v){
+  const r=String(v||"").trim();
+  if(!r)return null;
+  if(/^\d{4}-\d{2}-\d{2}$/.test(r))return r;
 
-      <div id="errorBox" class="message error" role="alert" hidden></div>
-      <div id="warnBox" class="message warn" hidden></div>
-    </section>
+  let m=r.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if(m)return `${m[3]}-${m[2].padStart(2,"0")}-${m[1].padStart(2,"0")}`;
 
-    <section id="view-results" class="card" aria-labelledby="wyniki-heading" hidden>
-      <h2 id="wyniki-heading">Wyniki</h2>
-      <p id="selectedDayText"></p>
-      <div id="resultsList"></div>
-      <p><button id="backButton" type="button" class="top-link">Wróć do wyboru dnia</button></p>
-    </section>
-  </main>
+  m=r.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
+  if(m)return `${m[3]}-${m[2].padStart(2,"0")}-${m[1].padStart(2,"0")}`;
 
-  <script>
-    function normalizeDate(value) {
-      const raw = String(value || "").trim();
-      if (!raw) return null;
+  return null;
+}
 
-      if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
+function normalizeTime(v){
+  const r=String(v||"").trim();
+  if(!r)return "";
+  return r.replace(".",":");
+}
 
-      let m = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-      if (m) return `${m[3]}-${String(m[2]).padStart(2, "0")}-${String(m[1]).padStart(2, "0")}`;
+function today(){
+  const d=new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
 
-      m = raw.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
-      if (m) return `${m[3]}-${String(m[2]).padStart(2, "0")}-${String(m[1]).padStart(2, "0")}`;
+function friendly(d){
+  const [y,m,da]=d.split("-").map(Number);
+  return new Intl.DateTimeFormat("pl-PL",{weekday:"long",day:"numeric",month:"long",year:"numeric"})
+    .format(new Date(y,m-1,da));
+}
 
-      return null;
-    }
+function split(l){return l.includes(";")?l.split(";"):l.split(",");}
 
-    function normalizeTime(value) {
-      const raw = String(value || "").trim();
-      if (!raw) return "";
-      const compact = raw.replace(".", ":");
-      const m = compact.match(/^(\d{1,2}):(\d{2})$/);
-      if (!m) return raw;
-      return `${String(m[1]).padStart(2, "0")}:${m[2]}`;
-    }
+function parse(text){
+  const lines=text.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+  if(lines.length<2)return [];
 
-    function todayIso() {
-      const now = new Date();
-      const y = now.getFullYear();
-      const m = String(now.getMonth() + 1).padStart(2, "0");
-      const d = String(now.getDate()).padStart(2, "0");
-      return `${y}-${m}-${d}`;
-    }
+  const header=split(lines[0]);
+  const row=split(lines[1]);
 
-    function friendlyDate(dateIso) {
-      const [y, m, d] = dateIso.split("-").map(Number);
-      const dt = new Date(y, m - 1, d);
-      return new Intl.DateTimeFormat("pl-PL", {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-        year: "numeric"
-      }).format(dt);
-    }
+  const out=[];
+  for(let i=0;i<header.length;i++){
+    const d=normalizeDate(header[i]);
+    if(!d)continue;
 
-    function splitLine(line) {
-      return line.includes(";") ? line.split(";") : line.split(",");
-    }
+    const s=(row[i]||"").toLowerCase().trim();
+    const e=(row[i+1]||"").toLowerCase().trim();
 
-    function parseCsv(text) {
-      const warnings = [];
-      const lines = String(text || "")
-        .replace(/^\uFEFF/, "")
-        .split(/\r?\n/)
-        .map(line => line.trim())
-        .filter(Boolean);
+    if(!s||s==="off"||s==="v")continue;
 
-      if (!lines.length) {
-        return { rows: [], warnings: ["Plik jest pusty."] };
-      }
+    out.push({date:d,start:normalizeTime(s),end:normalizeTime(e)});
+  }
+  return out;
+}
 
-      const first = splitLine(lines[0]);
-      const header = first.map(x => x.trim().toLowerCase());
-      const dateIndex = header.findIndex(h => ["date", "data", "dzien", "dzień"].includes(h));
+const status=document.getElementById("status");
+const sel=document.getElementById("sel");
+const btn=document.getElementById("btn");
+const err=document.getElementById("err");
 
-      if (dateIndex !== -1) {
-        const startIndex = header.findIndex(h => ["start", "od", "godzina_od", "od godz"].includes(h));
-        const endIndex = header.findIndex(h => ["end", "do", "godzina_do", "do godz"].includes(h));
-        const rows = [];
+btn.onclick=()=>{
+  if(!sel.value)return err.textContent="Wybierz dzień";
+  location.href="results.html?day="+encodeURIComponent(sel.value);
+};
 
-        for (let i = 1; i < lines.length; i++) {
-          const cols = splitLine(lines[i]).map(x => x.trim());
-          const date = normalizeDate(cols[dateIndex] || "");
-          if (!date) continue;
+fetch("grafik.csv",{cache:"no-store"})
+.then(r=>{
+  if(!r.ok)throw new Error("Błąd wczytywania grafiku");
+  return r.text();
+})
+.then(text=>{
+  const rows=parse(text);
+  const t=today();
 
-          rows.push({
-            date,
-            start: startIndex >= 0 ? normalizeTime(cols[startIndex] || "") : "",
-            end: endIndex >= 0 ? normalizeTime(cols[endIndex] || "") : "",
-            title: "Dyżur"
-          });
-        }
+  const dates=[...new Set(rows.map(r=>r.date).filter(d=>d>=t))].sort();
 
-        return { rows, warnings };
-      }
+  if(!dates.length){
+    err.textContent="Brak dyżurów";
+    status.textContent="";
+    return;
+  }
 
-      if (lines.length < 2) {
-        return { rows: [], warnings: ["Plik ma za mało danych."] };
-      }
+  dates.forEach(d=>{
+    const o=document.createElement("option");
+    o.value=d;
+    o.textContent=friendly(d);
+    sel.appendChild(o);
+  });
 
-      const headerRow = splitLine(lines[0]);
-      const dataRow = splitLine(lines[1]);
-      const rows = [];
+  status.textContent="Grafik wczytany.";
+})
+.catch(e=>{
+  status.textContent="";
+  err.textContent=e.message;
+});
+</script>
 
-      for (let i = 0; i < headerRow.length; i++) {
-        const date = normalizeDate(headerRow[i] || "");
-        if (!date) continue;
-
-        const startRaw = String(dataRow[i] || "").trim().toLowerCase();
-        const endRaw = String(dataRow[i + 1] || "").trim().toLowerCase();
-
-        if (!startRaw || startRaw === "off" || startRaw === "v") continue;
-
-        rows.push({
-          date,
-          start: normalizeTime(startRaw),
-          end: normalizeTime(endRaw),
-          title: "Dyżur"
-        });
-      }
-
-      if (!rows.length) {
-        warnings.push("Nie udało się odczytać dyżurów z pliku.");
-      }
-
-      return { rows, warnings };
-    }
-
-    const state = {
-      today: todayIso(),
-      rows: [],
-      warnings: []
-    };
-
-    const qs = new URLSearchParams(window.location.search);
-    const selectedFromUrl = qs.get("day") || "";
-
-    const viewSelect = document.getElementById("view-select");
-    const viewResults = document.getElementById("view-results");
-    const daySelect = document.getElementById("daySelect");
-    const showButton = document.getElementById("showButton");
-    const statusLoad = document.getElementById("status-load");
-    const errorBox = document.getElementById("errorBox");
-    const warnBox = document.getElementById("warnBox");
-    const selectedDayText = document.getElementById("selectedDayText");
-    const resultsList = document.getElementById("resultsList");
-    const backButton = document.getElementById("backButton");
-
-    function setError(message) {
-      if (!message) {
-        errorBox.hidden = true;
-        errorBox.textContent = "";
-        return;
-      }
-      errorBox.hidden = false;
-      errorBox.textContent = message;
-    }
-
-    function setWarnings(warnings) {
-      if (!warnings || !warnings.length) {
-        warnBox.hidden = true;
-        warnBox.innerHTML = "";
-        return;
-      }
-      warnBox.hidden = false;
-      warnBox.innerHTML = `<h3>Uwagi do pliku</h3><ul>${warnings.map(w => `<li>${escapeHtml(w)}</li>`).join("")}</ul>`;
-    }
-
-    function escapeHtml(value) {
-      return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-    }
-
-    function getFutureDates() {
-      return Array.from(new Set(state.rows.map(r => r.date).filter(d => d >= state.today))).sort();
-    }
-
-    function fillDateSelect() {
-      const futureDates = getFutureDates();
-      daySelect.innerHTML = "";
-
-      if (!futureDates.length) {
-        const opt = document.createElement("option");
-        opt.value = "";
-        opt.textContent = "Brak dostępnych dni";
-        daySelect.appendChild(opt);
-        daySelect.disabled = true;
-        showButton.disabled = true;
-        return;
-      }
-
-      futureDates.forEach(date => {
-        const opt = document.createElement("option");
-        opt.value = date;
-        opt.textContent = friendlyDate(date);
-        daySelect.appendChild(opt);
-      });
-
-      const usableDate = futureDates.includes(selectedFromUrl) ? selectedFromUrl : futureDates[0];
-      daySelect.value = usableDate;
-      daySelect.disabled = false;
-      showButton.disabled = false;
-    }
-
-    function renderResults(selectedDate) {
-      const duties = state.rows.filter(r => r.date === selectedDate);
-      selectedDayText.innerHTML = `Wybrany dzień: <strong>${escapeHtml(friendlyDate(selectedDate))}</strong>`;
-      resultsList.innerHTML = "";
-
-      if (!duties.length) {
-        resultsList.innerHTML = '<div class="duty"><p>Na ten dzień nie ma żadnych dyżurów w pliku.</p></div>';
-      } else {
-        duties.forEach(duty => {
-          const article = document.createElement("article");
-          article.className = "duty";
-
-          const title = escapeHtml((duty.title || "Dyżur").trim() || "Dyżur");
-          const hours = duty.start || duty.end ? `${escapeHtml(duty.start || "?")}–${escapeHtml(duty.end || "?")}` : "Brak informacji o godzinach";
-
-          article.innerHTML = `
-            <h3>${title}</h3>
-            <div><strong>Godziny:</strong> ${hours}</div>
-          `;
-
-          resultsList.appendChild(article);
-        });
-      }
-
-      viewSelect.hidden = true;
-      viewResults.hidden = false;
-    }
-
-    async function loadCsv() {
-      setError("");
-      setWarnings([]);
-      statusLoad.textContent = "Wczytywanie grafiku…";
-
-      try {
-        const response = await fetch("grafik.csv", { cache: "no-store" });
-        if (!response.ok) {
-          throw new Error("Nie udało się pobrać pliku grafik.csv.");
-        }
-
-        const text = await response.text();
-        const result = parseCsv(text);
-        state.rows = result.rows;
-        state.warnings = result.warnings;
-
-        setWarnings(result.warnings);
-        fillDateSelect();
-
-        const futureDates = getFutureDates();
-        if (!futureDates.length) {
-          setError("W pliku nie ma żadnych dyżurów od dzisiaj w przód.");
-          statusLoad.textContent = "Grafik wczytany, ale brak przyszłych dyżurów.";
-          return;
-        }
-
-        statusLoad.textContent = "Grafik wczytany.";
-        if (selectedFromUrl && futureDates.includes(selectedFromUrl)) {
-          renderResults(selectedFromUrl);
-        }
-      } catch (error) {
-        setError(error && error.message ? error.message : "Nie udało się wczytać grafiku.");
-        statusLoad.textContent = "Błąd wczytywania grafiku.";
-      }
-    }
-
-    showButton.addEventListener("click", () => {
-      const selectedDate = daySelect.value;
-      if (!selectedDate || selectedDate < state.today) {
-        setError("Możesz wybrać tylko dzień od dzisiaj w przód.");
-        return;
-      }
-      setError("");
-      renderResults(selectedDate);
-    });
-
-    backButton.addEventListener("click", () => {
-      viewResults.hidden = true;
-      viewSelect.hidden = false;
-      setError("");
-      daySelect.focus();
-    });
-
-    loadCsv();
-  </script>
 </body>
 </html>
