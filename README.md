@@ -2,18 +2,27 @@
 
 Polish version: [README_pl.md](README_pl.md)
 
-Google Calendar Reader is an NVDA add-on for Windows that allows quick sign-in to Google Calendar, calendar selection, and spoken reading of events using keyboard shortcuts.
+Google Calendar Reader is a test NVDA add-on for Windows. It allows users to sign in to Google Calendar, choose calendars, read events, and perform basic event operations from the keyboard.
+
+## Project status
+
+This project is currently in a test version. It has not completed full Google verification yet, so it is not offered as a finished public tool for all users.
+
+If you want to test the add-on or ask about access, please contact the author.
 
 ## Features
 
 The add-on allows you to:
 
-- sign in to your Google account through a web browser
-- read Google Calendar events for today and the following days
-- choose which calendars should be included in the spoken output
-- switch between short mode and full mode
-- hear when an event is currently in progress
-- skip already finished events for the current day
+- sign in to your Google account through a web browser,
+- read Google Calendar events for today and the following days,
+- choose which calendars should be included in the spoken output,
+- switch between short mode and full mode,
+- hear when an event is currently in progress,
+- skip already finished events for the current day,
+- create events,
+- edit events,
+- delete events.
 
 ## Requirements
 
@@ -35,7 +44,7 @@ To sign in to Google Calendar:
 1. Press:
    `NVDA+Control+Shift+0`
 2. Your web browser will open.
-3. Sign in to your Google account and allow calendar access.
+3. Sign in to your Google account and allow the required calendar access.
 4. After sign-in is complete, return to NVDA.
 5. Press:
    `NVDA+Control+Shift+0` again.
@@ -48,8 +57,8 @@ If sign-in was successful, the add-on will announce that you are signed in to Go
 
 `NVDA+Control+Shift+0`
 
-- starts Google sign-in if the user is not signed in
-- checks sign-in status if the user is already signed in
+- starts Google sign-in if the user is not signed in,
+- checks sign-in status if the user is already signed in.
 
 ### Event reading
 
@@ -80,8 +89,8 @@ Read events for 6 days from now
 
 Switches between:
 
-- short mode
-- full mode
+- short mode,
+- full mode.
 
 ### Calendar selection
 
@@ -93,10 +102,10 @@ Opens the calendar selection window and lets you choose which calendars should b
 
 In the calendar selection window:
 
-- Up and Down Arrow move through the list
-- Space checks or unchecks the selected calendar
-- Enter saves the selection and closes the window
-- Escape closes the window without saving changes
+- Up and Down Arrow move through the list,
+- Space checks or unchecks the selected calendar,
+- Enter saves the selection and closes the window,
+- Escape closes the window without saving changes.
 
 If no calendar is selected, the add-on automatically uses the primary calendar.
 
@@ -130,15 +139,19 @@ If multiple calendars are selected, the add-on may also announce the calendar na
 
 For the current day, the add-on:
 
-- skips events that have already finished
-- announces events that are currently in progress
-- reads upcoming events
+- skips events that have already finished,
+- announces events that are currently in progress,
+- reads upcoming events.
 
 Example:
 
 `until 15:00, Team meeting in progress`
 
 For future days, all events on that day are read.
+
+## Calendar-changing operations
+
+The current version of the add-on can create, edit, and delete events in Google Calendar. Before performing an operation that changes the calendar, make sure the selected calendar and event details are correct.
 
 ## Add-on language
 
@@ -153,24 +166,18 @@ Currently supported:
 
 The add-on may create the following local files:
 
-- `token.json` — local Google sign-in token
-- `settings.json` — selected calendars and speech mode settings
-- `last_oauth_error.txt` — helper file for OAuth error diagnostics
+- `token.json` — local Google sign-in token,
+- `settings.json` — selected calendars and speech mode settings,
+- `last_oauth_error.txt` — helper file for OAuth error diagnostics,
+- diagnostic files related to errors while creating, editing, or deleting events.
 
-These files are stored locally on the user's computer.
+These files are stored locally on the user's computer. Diagnostic files may contain technical error information and, in some cases, data entered into an event form.
 
 ## Privacy
 
-The add-on uses the Google Calendar API in read-only mode only.
+The add-on communicates with Google services required for sign-in and Google Calendar API access. It does not send calendar data to an external server controlled by the author and does not maintain a separate database of user events.
 
-The add-on does not:
-
-- create events
-- edit events
-- delete events
-- send calendar data to external servers controlled by the developer
-
-Calendar data is used locally only, for spoken output through NVDA.
+The current version uses an access scope that allows reading calendars and events, as well as creating, editing, and deleting events when the user runs the corresponding function.
 
 ## Troubleshooting
 
