@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dostępność - PT Projects</title>
-  <meta name="description" content="Informacje o dostępności strony PT Projects.">
+  <meta name="description" content="Informacje o dostępności strony PT Projects i sposobach zgłaszania problemów.">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -32,23 +32,32 @@
   <main id="main-content">
     <div class="content">
       <h1>Dostępność</h1>
-      <p>Ta strona od początku była robiona z myślą o prostocie. Ma dać się normalnie czytać, a nie zmuszać do walki z układem, menu albo przypadkowymi ozdobnikami.</p>
+      <p>Ta strona jest robiona z myślą o prostym, przewidywalnym korzystaniu. Chcę, żeby dało się ją wygodnie czytać z klawiatury i przy pomocy czytnika ekranu, bez walki z układem, menu albo niepotrzebnymi ozdobnikami.</p>
+      <p>Nie traktuję dostępności jako dodatku na końcu. To jeden z powodów, dla których strona jest statyczna, lekka i oparta głównie na zwykłym HTML-u.</p>
+
+      <section class="section" aria-labelledby="what-is-here-heading">
+        <h2 id="what-is-here-heading">Co już jest zrobione</h2>
+        <ul>
+          <li>strona ma link „Przejdź do treści”,</li>
+          <li>menu jest zwykłą listą linków i ma etykietę dla czytników ekranu,</li>
+          <li>aktualna pozycja w menu jest oznaczona atrybutem <code>aria-current</code>,</li>
+          <li>nagłówki są używane do porządkowania treści,</li>
+          <li>linki mają zrozumiałe nazwy,</li>
+          <li>elementy interaktywne można obsłużyć klawiaturą,</li>
+          <li>fokus klawiatury jest wyraźnie widoczny,</li>
+          <li>strona nie używa zbędnych skryptów.</li>
+        </ul>
+      </section>
 
       <section class="section" aria-labelledby="rules-heading">
         <h2 id="rules-heading">Na czym mi zależy</h2>
-        <ul>
-          <li>logiczna struktura nagłówków,</li>
-          <li>czytelne nazwy linków,</li>
-          <li>szybkie przejście do treści,</li>
-          <li>obsługa z klawiatury,</li>
-          <li>mało zbędnych skryptów i ozdób,</li>
-          <li>przewidywalne działanie z czytnikami ekranu.</li>
-        </ul>
+        <p>Najważniejsze są dla mnie czytelna struktura, przewidywalne działanie i teksty, które nie wymagają zgadywania. Jeśli pojawią się pliki dźwiękowe, projekty muzyczne albo dłuższe artykuły, będę starał się dodawać do nich kontekst tekstowy.</p>
       </section>
 
       <section class="section" aria-labelledby="feedback-heading">
         <h2 id="feedback-heading">Jeśli coś nie działa</h2>
-        <p>Jeżeli trafisz tu na coś nieczytelnego albo zwyczajnie niewygodnego, daj mi znać. Takie uwagi są dla mnie dużo cenniejsze niż puste zapewnienia, że wszystko jest super.</p>
+        <p>Jeżeli trafisz tu na coś nieczytelnego, niewygodnego albo trudnego do obsłużenia z klawiatury lub czytnikiem ekranu, daj mi znać. Najprościej napisać na adres <a href="mailto:piotrktarasewicz@gmail.com">piotrktarasewicz@gmail.com</a>.</p>
+        <p>W zgłoszeniu przyda się informacja, z jakiego czytnika ekranu, przeglądarki i urządzenia korzystasz oraz na której stronie pojawił się problem.</p>
       </section>
     </div>
   </main>
