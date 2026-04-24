@@ -15,14 +15,15 @@ If you want to test the add-on or ask about access, please contact the author.
 The add-on allows you to:
 
 - sign in to your Google account through a web browser,
-- read Google Calendar events for today and the following days,
-- choose which calendars should be included in the spoken output,
+- read Google Calendar events with keyboard shortcuts for today and the next 7 days, with the option to choose another date,
+- choose calendars used for reading, creating, and editing events,
 - switch between short mode and full mode,
 - hear when an event is currently in progress,
 - skip already finished events for the current day,
 - create events,
 - edit events,
-- delete events.
+- delete events,
+- work through layered NVDA keyboard shortcuts.
 
 ## Requirements
 
