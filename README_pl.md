@@ -15,14 +15,15 @@ Jeśli chcesz przetestować dodatek albo porozmawiać o dostępie, skontaktuj si
 Dodatek umożliwia:
 
 - logowanie do konta Google przez przeglądarkę,
-- odczytywanie wydarzeń z Google Calendar na dziś i kolejne dni,
-- wybór kalendarzy, które mają być uwzględniane przy odczycie,
+- odczytywanie przy pomocy skrótów wydarzeń z Google Calendar na dziś i kolejne 7 dni, z możliwością wyboru innej daty,
+- wybór kalendarzy używanych przy odczycie, zapisie i edycji,
 - przełączanie między trybem krótkim i pełnym,
 - informowanie o wydarzeniach trwających,
 - pomijanie zakończonych wydarzeń z bieżącego dnia,
 - tworzenie wydarzeń,
 - edytowanie wydarzeń,
-- usuwanie wydarzeń.
+- usuwanie wydarzeń,
+- działanie z poziomu warstwowych skrótów klawiaturowych NVDA.
 
 ## Wymagania
 
