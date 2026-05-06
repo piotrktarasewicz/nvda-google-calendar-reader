@@ -1,357 +1,485 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Odkryj Womai – prototyp</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Odkryj Womai — strefa gościa v13</title>
   <style>
-    :root{--bg:#0d1020;--text:#f5f7fb;--muted:#c4c9da;--accent:#ff4f9f;--accent-alt:#54d6ff;--accent-warm:#ffd166;--success:#5ee7a5;--border:rgba(255,255,255,.12);--border-strong:rgba(255,255,255,.2);--radius:28px;--shadow:0 20px 60px rgba(0,0,0,.28)}
-    *{box-sizing:border-box} html,body{margin:0;padding:0}
-    body{font-family:Inter,system-ui,sans-serif;background:radial-gradient(circle at top left, rgba(255,79,159,.15), transparent 30%),radial-gradient(circle at top right, rgba(84,214,255,.10), transparent 28%),linear-gradient(180deg, var(--bg) 0%, #090c18 100%);color:var(--text);min-height:100vh;line-height:1.5}
-    .wrap{max-width:1280px;margin:0 auto;padding:24px 16px}
-    .header{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:24px}
-    .eyebrow{font-size:12px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--accent-warm)}
-    .title{font-size:32px;font-weight:700;margin-top:4px}
-    .toggle{display:inline-flex;border:1px solid var(--border);background:rgba(255,255,255,.04);padding:4px;border-radius:16px;gap:4px}
-    .toggle button,.ghost-btn,.primary-btn,.small-btn,.choice{font:inherit;border:0;cursor:pointer}
-    .toggle button{background:transparent;color:var(--text);padding:10px 16px;border-radius:12px;font-size:14px;font-weight:700}
-    .toggle button.active{background:rgba(255,255,255,.16);box-shadow:0 0 0 1px var(--border-strong)}
-    .ghost-btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text);padding:10px 16px;border-radius:16px;font-size:14px;font-weight:600}
-    .main{display:grid;gap:24px}.guest-layout{grid-template-columns:1.05fr .95fr}
-    .card{border:1px solid var(--border);background:rgba(21,25,54,.94);border-radius:var(--radius);box-shadow:var(--shadow)}
-    .hero{padding:32px;overflow:hidden;position:relative;min-height:640px}
-    .side{display:grid;gap:24px}.panel{padding:24px;background:rgba(28,34,69,.92)}.panel.soft{background:rgba(255,255,255,.03);box-shadow:none}
-    .badge{display:inline-flex;align-items:center;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.08);color:var(--accent-warm);font-size:14px;font-weight:700}
-    h1{font-size:56px;line-height:1.05;margin:20px 0 0;max-width:760px} h2{font-size:42px;line-height:1.1;margin:0;max-width:860px} h3{margin:0}
-    p.lead{font-size:20px;line-height:1.8;color:var(--muted);max-width:860px;margin:20px 0 0}
-    .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-    .stat{border:1px solid var(--border);background:rgba(255,255,255,.03);padding:16px;border-radius:24px}.stat .st{font-size:16px;font-weight:700;margin-bottom:8px}
-    .muted{color:var(--muted)} .actions{display:flex;flex-wrap:wrap;align-items:center;gap:16px}
-    .primary-btn{display:inline-flex;align-items:center;gap:10px;padding:16px 20px;border-radius:16px;background:linear-gradient(135deg,var(--accent) 0%,var(--accent-warm) 100%);color:#160f1a;font-size:16px;font-weight:800}
-    .small-btn{padding:10px 16px;border-radius:16px;background:rgba(255,255,255,.08);color:var(--text);font-size:14px;font-weight:700}
-    .progress-top{margin-bottom:28px}.progress-meta{display:flex;justify-content:space-between;align-items:center;font-size:14px;color:var(--muted);margin-bottom:8px}
-    .progress-bar{height:8px;background:rgba(255,255,255,.12);border-radius:999px;overflow:hidden}.progress-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--accent-warm));transition:width .4s ease}
-    .choices{display:grid;gap:16px;margin-top:32px}
-    .choice{width:100%;text-align:left;padding:18px 16px;border-radius:20px;color:var(--text);border:1px solid var(--border);background:rgba(255,255,255,.03);font-size:18px;font-weight:600;transition:transform .15s ease,background-color .15s ease,border-color .15s ease}
-    .choice:hover{transform:scale(1.01)} .choice.selected{background:rgba(84,214,255,.1);border-color:var(--accent-alt)} .choice.correct{background:rgba(94,231,165,.12);border-color:var(--success)} .choice.wrong{background:rgba(255,157,167,.12);border-color:#ff9da7}
-    .feedback{margin-top:24px;padding:20px;border-radius:24px;border:1px solid var(--border);background:rgba(255,255,255,.04)} .feedback-title{display:flex;gap:8px;align-items:center;font-weight:700;margin-bottom:8px}
-    .step-bottom{padding-top:32px;margin-top:auto}
-    .reward-box{margin-top:32px;padding:24px;border-radius:28px;border:1px solid var(--border);background:linear-gradient(135deg,rgba(255,79,159,.12),rgba(255,209,102,.12))}
-    .reward-icon{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;background:rgba(255,255,255,.08);font-size:28px;margin-bottom:12px}
-    .panel h3{margin:0 0 16px;font-size:18px}.panel .kicker{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.18em;color:var(--accent-alt);margin-bottom:16px}.panel ul{margin:0;padding-left:20px}.panel li{margin-bottom:12px;color:var(--muted)}
-    .admin-layout{grid-template-columns:280px 1fr}.admin-nav{padding:20px}.admin-nav .nav-item{display:flex;align-items:center;gap:12px;padding:14px 14px;border-radius:18px;color:var(--text);margin-bottom:8px}.admin-nav .nav-item.active{border:1px solid var(--border-strong);background:rgba(255,255,255,.06)}
-    .admin-main{display:grid;gap:24px}.admin-top,.admin-card{padding:24px}.status-pill{border-radius:999px;padding:6px 12px;font-size:14px;font-weight:700;background:rgba(255,255,255,.08);color:var(--success)}
-    .admin-stats{display:grid;gap:16px;grid-template-columns:repeat(4,1fr)} .admin-grid{display:grid;gap:24px;grid-template-columns:1.1fr .9fr}
-    .activity-list{display:grid;gap:12px}.activity-item{border:1px solid var(--border);background:rgba(255,255,255,.03);padding:16px;border-radius:24px}.activity-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:8px}.activity-index{font-size:14px;font-weight:700;color:var(--accent-warm)}.activity-title{font-size:16px;font-weight:700;margin-top:4px}.activity-type{border-radius:999px;padding:6px 12px;font-size:12px;font-weight:700;background:rgba(255,255,255,.08);color:var(--muted)}.row-links{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--muted)}
-    .hidden{display:none!important}
-    @media (max-width:1100px){.guest-layout,.admin-layout,.admin-grid{grid-template-columns:1fr}.admin-stats,.grid3{grid-template-columns:1fr}h1{font-size:42px}h2{font-size:34px}.hero{min-height:auto}}
-    @media (max-width:640px){.wrap{padding:16px}.hero,.panel,.admin-top,.admin-card,.admin-nav{padding:20px}h1{font-size:36px}h2{font-size:28px}p.lead{font-size:18px}.title{font-size:26px}}
-    button:focus-visible{outline:3px solid var(--accent-alt);outline-offset:3px}.focus-anchor:focus{outline:none}
+    :root {
+      --bg: #0d1020; --text: #f5f7fb; --muted: #c4c9da; --accent: #ff4f9f; --accent-alt: #54d6ff;
+      --accent-warm: #ffd166; --success: #5ee7a5; --danger: #ff9da7; --border: rgba(255,255,255,.12);
+      --radius: 24px; --shadow: 0 20px 60px rgba(0,0,0,.28);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(255,79,159,.15), transparent 30%),
+        radial-gradient(circle at top right, rgba(84,214,255,.10), transparent 28%),
+        linear-gradient(180deg, var(--bg) 0%, #090c18 100%);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 20px 16px 32px; }
+    .card { border: 1px solid var(--border); background: rgba(21,25,54,.94); border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 8px; flex-wrap: wrap; }
+    .badge { display: inline-flex; align-items: center; padding: 6px 12px; border-radius: 999px; background: rgba(255,255,255,.08); color: var(--accent-warm); font-size: 14px; font-weight: 700; }
+    h1 { font-size: 2rem; line-height: 1.15; margin: 18px 0 0; }
+    h2 { font-size: 1.6rem; line-height: 1.2; margin: 16px 0 0; }
+    p { margin: 12px 0 0; }
+    .lead { color: var(--muted); font-size: 1.05rem; }
+    .actions, .meta-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 24px; }
+    button { font: inherit; border: 1px solid var(--border); cursor: pointer; border-radius: 16px; padding: 12px 16px; background: rgba(255,255,255,.05); color: var(--text); }
+    button.primary { background: linear-gradient(135deg,var(--accent) 0%,var(--accent-warm) 100%); color: #160f1a; border-color: transparent; font-weight: 700; }
+    button:focus-visible { outline: 3px solid var(--accent-alt); outline-offset: 3px; }
+    button[disabled] { opacity: .55; cursor: not-allowed; }
+    .progress-top { margin-bottom: 24px; }
+    .progress-meta { display: flex; justify-content: space-between; gap: 12px; align-items: center; font-size: 14px; color: var(--muted); margin-bottom: 8px; }
+    .progress-bar { height: 8px; background: rgba(255,255,255,.12); border-radius: 999px; overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg,var(--accent),var(--accent-warm)); }
+    .choices { display: grid; gap: 14px; margin-top: 28px; }
+    .choice { width: 100%; text-align: left; padding: 16px; border-radius: 18px; border: 1px solid var(--border); background: rgba(255,255,255,.03); color: var(--text); font-size: 1rem; font-weight: 600; }
+    .choice.selected { background: rgba(84,214,255,.1); border-color: var(--accent-alt); }
+    .choice.correct { background: rgba(94,231,165,.12); border-color: var(--success); }
+    .choice.wrong { background: rgba(255,157,167,.12); border-color: var(--danger); }
+    .feedback { margin-top: 24px; padding: 18px; border-radius: 20px; border: 1px solid var(--border); background: rgba(255,255,255,.04); }
+    .feedback-title { font-weight: 700; margin: 0 0 10px; }
+    .summary-box { margin-top: 28px; padding: 22px; border-radius: 22px; border: 1px solid var(--border); background: linear-gradient(135deg,rgba(255,79,159,.12),rgba(255,209,102,.12)); }
+    .help-box { margin-top: 12px; padding: 16px; border-radius: 18px; border: 1px solid var(--border); background: rgba(255,255,255,.04); }
+    .muted { color: var(--muted); }
+    .hidden { display: none !important; }
+    .focus-anchor:focus { outline: none; }
+    .small-note { font-size: .95rem; color: var(--muted); }
+    .visually-hidden { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+    .error-box { margin-top: 18px; padding: 16px; border: 1px solid rgba(255,157,167,.5); border-radius: 18px; background: rgba(255,157,167,.12); }
+    .site-footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.95rem; }
   </style>
 </head>
 <body>
-<div class="wrap">
-<header class="header">
-  <div><div class="eyebrow">Prototyp do prezentacji</div><div class="title">Odkryj Womai</div></div>
-  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-    <div class="toggle" role="tablist" aria-label="Tryb podglądu">
-      <button id="mode-guest" class="active" type="button" aria-pressed="true" aria-label="Widok gościa, aktywny">Widok gościa</button>
-      <button id="mode-admin" type="button" aria-pressed="false" aria-label="Widok administratora">Widok administratora</button>
-    </div>
-    <button id="restart-top" class="ghost-btn hidden" type="button">Zacznij od nowa</button>
-  </div>
-</header>
-
-<main id="guest-view" class="main guest-layout">
-  <section class="card hero">
-    <div id="guest-start">
-      <div class="badge">Interaktywna ścieżka marki</div>
-      <h1>Odkryj Womai</h1>
-      <p class="lead">Prototyp pokazuje, jak można połączyć treści edukacyjne, prostą interakcję i dodatkowy element dla gościa w jednej spójnej formie pod marką Womai.</p>
-      <div class="grid3" style="margin-top:32px">
-        <div class="stat"><div class="st">Ciemność</div><div class="muted">Krótka forma oparta na micie i fakcie, która uruchamia myślenie i poszerza perspektywę.</div></div>
-        <div class="stat"><div class="st">Światło</div><div class="muted">Pytanie, które nie tylko sprawdza wiedzę, ale też pokazuje, że zjawiska można tłumaczyć prosto i ciekawie.</div></div>
-        <div class="stat"><div class="st">Eksperymenty</div><div class="muted">Moment przewidywania i komentarz po odpowiedzi — prosty model angażowania gościa.</div></div>
-      </div>
-      <div class="actions" style="margin-top:32px">
-        <button id="start-btn" class="primary-btn" type="button">Uruchom ścieżkę</button>
-        <div class="muted" style="font-size:14px;line-height:1.6">Wersja demonstracyjna do rozmowy o wartości, formie i możliwościach rozwoju.</div>
-      </div>
-    </div>
-
-    <div id="guest-step" class="hidden">
-      <div class="progress-top">
-        <div class="progress-meta"><span id="progress-label"></span></div>
-        <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+  <main class="wrap">
+    <section class="card">
+      <div class="topbar">
+        <div class="badge">Odkryj Womai</div>
+        <button id="helpBtn" type="button" aria-expanded="false" aria-controls="helpBox">Pomoc</button>
       </div>
 
-      <div class="badge" id="step-section"></div>
-      <h2 id="step-title" style="margin-top:16px"></h2>
-      <p id="step-body" class="lead" style="max-width:920px"></p>
-
-      <div id="choices" class="choices"></div>
-
-      <div id="feedback" class="feedback hidden" aria-live="polite">
-        <div class="feedback-title" id="feedback-title-wrap"><span aria-hidden="true">✔</span><h3 id="feedback-title" class="focus-anchor" tabindex="-1"></h3></div>
-        <p id="feedback-text" style="margin:0"></p>
+      <div id="helpBox" class="help-box hidden" hidden>
+        <div class="feedback-title">Jak to działa?</div>
+        <div>Odpowiadasz na krótką serię pytań. Po każdej odpowiedzi od razu zobaczysz krótkie wyjaśnienie. Na końcu możesz wrócić po kolejne wyzwanie.</div>
       </div>
 
-      <div id="summary-block" class="hidden" style="margin-top:32px">
-        <div class="reward-box">
-          <div style="font-size:22px;font-weight:700">Poprawne odpowiedzi: <span id="correct-count"></span> / 3</div>
-          <div style="margin-top:24px">
-            <h3 style="font-size:22px;font-weight:700">Zdobyłeś odznakę</h3>
-            <div class="reward-icon" aria-hidden="true">🏅</div>
-            <div style="font-size:18px;font-weight:700">Odkrywca Womai</div>
-            <p style="margin-top:12px">W pełnej wersji w tym miejscu mogłaby pojawić się odznaka, zniżka, voucher albo inny bonus związany z wizytą w Womai.</p>
+      <div id="startView">
+        <h1>Krótka ścieżka pełna pytań i ciekawostek</h1>
+        <p class="lead">Zagraj, sprawdź się i zobacz, co uda Ci się odkryć tym razem. Każda sesja to nowy zestaw pytań.</p>
+        <div id="loadingBox" class="help-box">Trwa pobieranie pytań…</div>
+        <div id="errorBox" class="error-box hidden" aria-live="assertive"></div>
+        <div class="actions">
+          <button id="startBtn" class="primary" type="button" disabled>Zacznij</button>
+        </div>
+      </div>
+
+      <div id="quizView" class="hidden">
+        <div class="progress-top">
+          <div class="progress-meta">
+            <span id="progressLabel">Pytanie 1 z 4</span>
+            <span id="sessionMeta" class="small-note"></span>
           </div>
-          <div style="margin-top:32px">
-            <h3 style="font-size:22px;font-weight:700">Odkryłeś fragment WOMAI</h3>
-            <p style="margin-top:12px">To tylko część tego, czego możesz tu doświadczyć. W pełnej wersji w tym miejscu mogłaby pojawić się odznaka, zniżka, voucher albo dostęp do kolejnej ścieżki.</p>
-            <p id="summary-body" style="margin-top:12px"></p>
-          </div>
+          <div class="progress-bar"><div id="progressFill" class="progress-fill" style="width:25%"></div></div>
+        </div>
+
+        <div class="badge" id="categoryBadge">Kategoria</div>
+        <h2 id="questionTitle" tabindex="-1" class="focus-anchor">Treść pytania</h2>
+        <div id="choicesWrap" class="choices"></div>
+        <div id="selectionState" class="visually-hidden" aria-live="polite"></div>
+
+        <div id="feedbackBox" class="feedback hidden" aria-live="polite">
+          <div id="feedbackTitle" class="feedback-title focus-anchor" tabindex="-1"></div>
+          <div id="feedbackText"></div>
+        </div>
+
+        <div class="meta-actions">
+          <button id="nextBtn" class="primary" type="button" disabled>Dalej</button>
+          <button id="restartBtn" type="button">Losuj nową sesję</button>
         </div>
       </div>
 
-      <div class="step-bottom"><button id="next-btn" class="primary-btn" type="button"></button></div>
-    </div>
-  </section>
+      <div id="summaryView" class="hidden">
+        <div class="badge">Podsumowanie</div>
+        <h2 tabindex="-1" id="summaryHeading" class="focus-anchor">To koniec, brawo!</h2>
+        <div class="summary-box">
+          <p><strong>Poprawnych odpowiedzi:</strong> <span id="scoreText">0 / 4</span></p>
+          <p id="summaryText" class="muted">Jeśli chcesz, w dowolnym momencie możesz tu wrócić. Czeka na Ciebie kolejne wyzwanie.</p>
+        </div>
+        <div class="actions">
+          <button id="playAgainBtn" class="primary" type="button">Zagraj ponownie</button>
+        </div>
+      </div>
 
-  <aside class="side">
-    <section class="card panel">
-      <div class="kicker">Co ten prototyp pokazuje</div>
-      <ul>
-        <li>Jedną spójną ścieżkę pod marką Womai, a nie osobny quiz dla każdego obszaru.</li>
-        <li>Pomysł na krótką interakcję, która może zostać z gościem na dłużej i naturalnie przedłużyć kontakt z Womai.</li>
-        <li>Miejsce na prosty finał: odznakę, zniżkę, voucher albo inny drobny bonus dla gościa.</li>
-        <li>Układ, który da się rozwijać bez zmieniania całej koncepcji od zera.</li>
-      </ul>
+      <footer class="site-footer">
+        <p>Projekt i rozwój: Krzysztof Tarasewicz</p>
+      </footer>
     </section>
-    <section class="card panel soft">
-      <h3>Jak można to rozwijać</h3>
-      <div class="muted" style="font-size:14px;line-height:1.8">
-        <p>Treści są oddzielone od wyglądu. Dzięki temu później można dodawać nowe ścieżki, pytania i nagrody bez przebudowy całej aplikacji.</p>
-        <p>Pierwsza wersja może działać jako prosta strona mobilna otwierana z kodu QR, a później zostać rozbudowana o panel administratora i większą bazę treści.</p>
-      </div>
-    </section>
-    <section class="card panel soft">
-      <h3>Dlaczego to jest czytelne</h3>
-      <ul>
-        <li>Duże przyciski i wyraźny układ treści</li>
-        <li>Proste komunikaty, bez niepotrzebnego technicznego języka</li>
-        <li>Dobrze dobrany kontrast i brak opierania się wyłącznie na kolorze</li>
-        <li>Rozwiązanie wygodne także dla osób korzystających z klawiatury i czytników ekranu</li>
-      </ul>
-    </section>
-  </aside>
-</main>
+  </main>
 
-<main id="admin-view" class="main admin-layout hidden">
-  <aside class="card admin-nav">
-    <div class="eyebrow" style="letter-spacing:.18em">Panel administratora</div>
-    <div class="nav-item">📊 Przegląd</div>
-    <div class="nav-item active">🧩 Ścieżki</div>
-    <div class="nav-item">🎁 Nagrody</div>
-    <div class="nav-item">👥 Administratorzy</div>
-    <div class="nav-item">⚙️ Ustawienia</div>
-  </aside>
+  <script>
+    (function () {
+      'use strict';
 
-  <section class="admin-main">
-    <div class="card admin-top">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:16px">
-        <div><div class="eyebrow" style="letter-spacing:.18em">Ścieżki</div><div style="font-size:32px;font-weight:700;margin-top:8px">Odkryj Womai</div></div>
-        <div class="status-pill">Robocza</div>
-      </div>
-      <div class="admin-stats">
-        <div class="stat"><div class="st">Typ ścieżki</div><div class="muted">Ogólna, pokazująca markę Womai jako całość.</div></div>
-        <div class="stat"><div class="st">Aktywności</div><div class="muted">5 ekranów: wprowadzenie, 3 interakcje i jeden finał.</div></div>
-        <div class="stat"><div class="st">Nagroda</div><div class="muted">Odznaka demonstracyjna z możliwością rozbudowy o voucher lub zniżkę.</div></div>
-        <div class="stat"><div class="st">Stan</div><div class="muted">Gotowa do pokazania jako pierwszy, rozwijalny prototyp.</div></div>
-      </div>
-    </div>
+      const ENDPOINT_URL = 'https://script.google.com/macros/s/AKfycbw4DT_QBC8em-TEXhP7BeAiiFZDrZqzSpLeOuy9HziSqlEVqwWiTbMql1qi0uSsuZ9v/exec';
+      const positiveFeedbackLeads = ['Brawo.', 'Super.', 'Świetnie.', 'Bardzo dobrze.', 'Dokładnie tak.'];
+      const negativeFeedbackLeads = ['Nie do końca.', 'Tym razem nie.', 'To jeszcze nie to.', 'Spójrzmy na to inaczej.'];
 
-    <div class="admin-grid">
-      <section class="card admin-card">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:20px">
-          <div><div class="eyebrow" style="letter-spacing:.18em">Zawartość ścieżki</div><div style="font-size:22px;font-weight:700;margin-top:8px">Modułowa lista aktywności</div></div>
-          <button class="small-btn" type="button">Dodaj aktywność</button>
-        </div>
-        <div class="activity-list">
-          <div class="activity-item"><div class="activity-top"><div><div class="activity-index">1. Wprowadzenie</div><div class="activity-title">To nie jest zwykły quiz</div></div><div class="activity-type">Ekran informacyjny</div></div><div class="row-links">👁️ Podejrzyj › Edytuj</div></div>
-          <div class="activity-item"><div class="activity-top"><div><div class="activity-index">2. Ciemność</div><div class="activity-title">Osoba niewidoma poznaje przestrzeń wyłącznie dzięki pomocy innych.</div></div><div class="activity-type">Mit czy fakt</div></div><div class="row-links">👁️ Podejrzyj › Edytuj</div></div>
-          <div class="activity-item"><div class="activity-top"><div><div class="activity-index">3. Światło</div><div class="activity-title">Jak myślisz, co ma większy wpływ na to, jak odbieramy kolor?</div></div><div class="activity-type">Jednokrotny wybór</div></div><div class="row-links">👁️ Podejrzyj › Edytuj</div></div>
-          <div class="activity-item"><div class="activity-top"><div><div class="activity-index">4. Eksperymenty</div><div class="activity-title">Spróbuj przewidzieć, co się stanie</div></div><div class="activity-type">Jednokrotny wybór</div></div><div class="row-links">👁️ Podejrzyj › Edytuj</div></div>
-          <div class="activity-item"><div class="activity-top"><div><div class="activity-index">5. Finał</div><div class="activity-title">Odkryłeś fragment Womai</div></div><div class="activity-type">Ekran końcowy</div></div><div class="row-links">👁️ Podejrzyj › Edytuj</div></div>
-        </div>
-      </section>
+      const startView = document.getElementById('startView');
+      const quizView = document.getElementById('quizView');
+      const summaryView = document.getElementById('summaryView');
+      const startBtn = document.getElementById('startBtn');
+      const restartBtn = document.getElementById('restartBtn');
+      const playAgainBtn = document.getElementById('playAgainBtn');
+      const helpBtn = document.getElementById('helpBtn');
+      const helpBox = document.getElementById('helpBox');
+      const loadingBox = document.getElementById('loadingBox');
+      const errorBox = document.getElementById('errorBox');
+      const progressLabel = document.getElementById('progressLabel');
+      const progressFill = document.getElementById('progressFill');
+      const sessionMeta = document.getElementById('sessionMeta');
+      const categoryBadge = document.getElementById('categoryBadge');
+      const questionTitle = document.getElementById('questionTitle');
+      const choicesWrap = document.getElementById('choicesWrap');
+      const feedbackBox = document.getElementById('feedbackBox');
+      const feedbackTitle = document.getElementById('feedbackTitle');
+      const feedbackText = document.getElementById('feedbackText');
+      const selectionState = document.getElementById('selectionState');
+      const nextBtn = document.getElementById('nextBtn');
+      const scoreText = document.getElementById('scoreText');
+      const summaryHeading = document.getElementById('summaryHeading');
 
-      <section style="display:grid;gap:24px">
-        <div class="card admin-card">
-          <h3 style="margin:0 0 16px">Co można edytować</h3>
-          <ul style="color:var(--muted);margin:0;padding-left:20px;line-height:1.8">
-            <li>Nazwę i opis ścieżki</li>
-            <li>Kolejność oraz typ aktywności</li>
-            <li>Pytania, odpowiedzi i komentarze po wyborze</li>
-            <li>Kolor przewodni i status publikacji</li>
-            <li>Nagrodę końcową lub brak nagrody</li>
-          </ul>
-        </div>
-        <div class="card admin-card" style="background:rgba(255,255,255,.03)">
-          <h3 style="margin:0 0 16px">Po co ten widok</h3>
-          <div class="muted" style="font-size:14px;line-height:1.8">
-            <p>To pokazuje, że nie mówimy o jednorazowej zabawie, tylko o czymś, co da się później rozwijać o kolejne ścieżki, akcje sezonowe i nowe nagrody.</p>
-            <p>Treść pozostaje oddzielona od wyglądu, więc zmiany można wprowadzać bez przebudowy całego projektu.</p>
-          </div>
-        </div>
-      </section>
-    </div>
-  </section>
-</main>
-</div>
+      const STORAGE_KEY = 'womai_guest_progress_v2';
+      let WOMAI_DATA = null;
+      let sessionQuestions = [];
+      let currentIndex = 0;
+      let selectedChoiceId = null;
+      let feedbackShown = false;
+      let answers = {};
 
-<script>
-const positiveFeedbackLeads = ["Brawo.","Super.","Świetnie.","Bardzo dobrze.","Dobrze myślisz.","Dokładnie tak."];
-const negativeFeedbackLeads = ["Nie do końca.","Tym razem nie.","To jeszcze nie to.","Tu odpowiedź jest trochę inna.","Warto spojrzeć na to inaczej.","Spróbujmy podejść do tego z innej strony."];
-const steps = [
-  {id:"intro",type:"intro",section:"Wprowadzenie",title:"To nie jest zwykły quiz",body:"To krótka, interaktywna ścieżka pokazująca, jak można opowiadać o Womai w nowoczesnej i lekkiej formie. Po drodze pojawiają się pytania, ciekawostki i prosty pomysł na dodatkowy element dla gościa.",buttonLabel:"Przejdź dalej"},
-  {id:"darkness",type:"myth",section:"Ciemność",title:"Jak myślisz?",body:"Osoba niewidoma poznaje przestrzeń wyłącznie dzięki pomocy innych.",buttonLabel:"Dalej",choices:[{id:"mit",label:"Mit",correct:true},{id:"fakt",label:"Fakt"}],explanation:"Osoby niewidome poznają przestrzeń na wiele sposobów: słuchem, dotykiem, pamięcią, orientacją przestrzenną i własnym doświadczeniem."},
-  {id:"light",type:"single",section:"Światło",title:"Jak myślisz, co ma większy wpływ na to, jak odbieramy kolor?",body:"Nie wszystko, co widzimy, jest tak oczywiste, jak nam się wydaje.",buttonLabel:"Dalej",choices:[{id:"light-only",label:"Samo światło"},{id:"contrast-only",label:"Otoczenie i kontrast"},{id:"both",label:"Jedno i drugie",correct:true}],explanation:"To, jak widzimy kolor, zależy nie tylko od samego światła, ale też od tła, kontrastu i tego, w jakim otoczeniu pojawia się dany obiekt."},
-  {id:"experiments",type:"single",section:"Eksperymenty",title:"Spróbuj przewidzieć, co się stanie",body:"Co stanie się, gdy dodamy sól do wrzątku?",buttonLabel:"Dalej",choices:[{id:"dissolve",label:"Rozpuści się",correct:true},{id:"float",label:"Będzie pływać po powierzchni"},{id:"sink",label:"Opadnie na dno"}],explanation:"Sól rozpuszcza się w wodzie, także gorącej. Wysoka temperatura może dodatkowo przyspieszyć cały proces."},
-  {id:"summary",type:"summary",section:"Finał",title:"Brawo! Ukończyłeś zadanie.",body:"Jeśli ta ścieżka Cię zaciekawiła, to na miejscu czeka na Ciebie znacznie więcej: kolejne doświadczenia, pytania i perspektywy, które warto odkrywać dalej.",buttonLabel:"Zacznij od nowa"}
-];
-
-let mode="guest";
-let started=false;
-let stepIndex=0;
-let answers={};
-let showFeedback=false;
-let feedbackLead="";
-
-const guestView=document.getElementById("guest-view");
-const adminView=document.getElementById("admin-view");
-const guestStart=document.getElementById("guest-start");
-const guestStep=document.getElementById("guest-step");
-const progressLabel=document.getElementById("progress-label");
-const progressFill=document.getElementById("progress-fill");
-const stepSection=document.getElementById("step-section");
-const stepTitle=document.getElementById("step-title");
-const stepBody=document.getElementById("step-body");
-const choicesWrap=document.getElementById("choices");
-const feedback=document.getElementById("feedback");
-const feedbackTitle=document.getElementById("feedback-title");
-const feedbackText=document.getElementById("feedback-text");
-const feedbackTitleWrap=document.getElementById("feedback-title-wrap");
-const summaryBlock=document.getElementById("summary-block");
-const correctCountEl=document.getElementById("correct-count");
-const summaryBody=document.getElementById("summary-body");
-const nextBtn=document.getElementById("next-btn");
-const restartTop=document.getElementById("restart-top");
-const guestModeBtn=document.getElementById("mode-guest");
-const adminModeBtn=document.getElementById("mode-admin");
-
-function getCurrentStep(){ return steps[stepIndex]; }
-function isAnswerStep(step){ return step.type === "myth" || step.type === "single"; }
-function randomFrom(pool){ return pool[Math.floor(Math.random()*pool.length)]; }
-function countCorrect(){
-  return steps.reduce((sum, step) => {
-    if (!isAnswerStep(step)) return sum;
-    const selected = answers[step.id];
-    const correct = step.choices.find(choice => choice.correct)?.id;
-    return sum + (selected && selected === correct ? 1 : 0);
-  }, 0);
-}
-function setModeButtonState(button, active, activeLabel, inactiveLabel){
-  button.classList.toggle("active", active);
-  button.setAttribute("aria-pressed", String(active));
-  button.setAttribute("aria-label", active ? activeLabel : inactiveLabel);
-}
-function focusFeedbackHeading(){ requestAnimationFrame(() => { feedbackTitle.focus(); }); }
-
-function render(){
-  setModeButtonState(guestModeBtn, mode === "guest", "Widok gościa, aktywny", "Widok gościa");
-  setModeButtonState(adminModeBtn, mode === "admin", "Widok administratora, aktywny", "Widok administratora");
-  guestView.classList.toggle("hidden", mode !== "guest");
-  adminView.classList.toggle("hidden", mode !== "admin");
-  restartTop.classList.toggle("hidden", !(mode === "guest" && started));
-  if (mode !== "guest") return;
-  guestStart.classList.toggle("hidden", started);
-  guestStep.classList.toggle("hidden", !started);
-  if (!started) return;
-  const step=getCurrentStep();
-  const current=stepIndex+1;
-  const total=steps.length;
-  const percent=Math.round((current/total)*100);
-  progressLabel.textContent=`Krok ${current} z ${total}`;
-  progressFill.style.width=`${percent}%`;
-  stepSection.textContent=step.section;
-  stepTitle.textContent=step.title;
-  stepBody.textContent=step.type === "summary" ? "" : step.body;
-  nextBtn.textContent=step.buttonLabel;
-  choicesWrap.innerHTML="";
-  feedback.classList.add("hidden");
-  summaryBlock.classList.add("hidden");
-  if (isAnswerStep(step)) {
-    step.choices.forEach(choice => {
-      const btn=document.createElement("button");
-      btn.type="button";
-      btn.className="choice";
-      btn.textContent=choice.label;
-      const selected=answers[step.id]===choice.id;
-      btn.setAttribute("aria-pressed", String(selected));
-      btn.setAttribute("aria-label", selected ? `${choice.label}, wybrana odpowiedź` : choice.label);
-      if (selected) btn.classList.add("selected");
-      if (showFeedback) {
-        if (choice.correct) { btn.classList.add("correct"); btn.classList.remove("selected"); }
-        else if (selected && !choice.correct) { btn.classList.add("wrong"); btn.classList.remove("selected"); }
+      function defaultMemory() {
+        return {
+          sessionsCompleted: 0,
+          totalCorrectAnswers: 0,
+          totalQuestionsAnswered: 0,
+          seenQuestionIds: [],
+          lastPlayedAt: '',
+          lastFirstQuestionId: ''
+        };
       }
-      btn.addEventListener("click", () => { answers[step.id]=choice.id; showFeedback=false; feedbackLead=""; render(); });
-      choicesWrap.appendChild(btn);
-    });
-    if (showFeedback) {
-      const selected=answers[step.id];
-      const correctChoice=step.choices.find(choice => choice.correct);
-      const isCorrectAnswer=selected===correctChoice?.id;
-      const correctChoiceLabel=correctChoice?.label ?? "";
-      const text=isCorrectAnswer ? step.explanation : `Poprawna odpowiedź to: ${correctChoiceLabel}. ${step.explanation}`;
-      feedback.classList.remove("hidden");
-      feedbackTitle.textContent=feedbackLead;
-      feedbackTitleWrap.style.color=isCorrectAnswer ? "var(--success)" : "var(--accent-warm)";
-      feedbackText.textContent=text;
-    }
-  }
-  if (step.type === "summary") {
-    summaryBlock.classList.remove("hidden");
-    correctCountEl.textContent=String(countCorrect());
-    summaryBody.textContent=step.body;
-  }
-  const canContinue=isAnswerStep(step) ? Boolean(answers[step.id]) : true;
-  nextBtn.disabled=!canContinue;
-  nextBtn.style.opacity=canContinue ? "1" : "0.5";
-  nextBtn.style.cursor=canContinue ? "pointer" : "not-allowed";
-}
 
-guestModeBtn.addEventListener("click", () => { mode="guest"; render(); });
-adminModeBtn.addEventListener("click", () => { mode="admin"; render(); });
-document.getElementById("start-btn").addEventListener("click", () => { started=true; stepIndex=0; answers={}; showFeedback=false; feedbackLead=""; render(); });
-restartTop.addEventListener("click", () => { started=false; stepIndex=0; answers={}; showFeedback=false; feedbackLead=""; render(); });
-nextBtn.addEventListener("click", () => {
-  const step=getCurrentStep();
-  const canContinue=isAnswerStep(step) ? Boolean(answers[step.id]) : true;
-  if (!canContinue) return;
-  if (isAnswerStep(step) && !showFeedback) {
-    const selected=answers[step.id];
-    const correct=step.choices.find(choice => choice.correct)?.id;
-    feedbackLead=selected === correct ? randomFrom(positiveFeedbackLeads) : randomFrom(negativeFeedbackLeads);
-    showFeedback=true;
-    render();
-    focusFeedbackHeading();
-    return;
-  }
-  if (stepIndex < steps.length - 1) { stepIndex += 1; showFeedback=false; feedbackLead=""; }
-  else { started=false; stepIndex=0; answers={}; showFeedback=false; feedbackLead=""; }
-  render();
-});
-render();
-</script>
+      function loadMemory() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return defaultMemory();
+          const parsed = JSON.parse(raw);
+          return {
+            sessionsCompleted: Number(parsed.sessionsCompleted || 0),
+            totalCorrectAnswers: Number(parsed.totalCorrectAnswers || 0),
+            totalQuestionsAnswered: Number(parsed.totalQuestionsAnswered || 0),
+            seenQuestionIds: Array.isArray(parsed.seenQuestionIds) ? parsed.seenQuestionIds : [],
+            lastPlayedAt: String(parsed.lastPlayedAt || ''),
+            lastFirstQuestionId: String(parsed.lastFirstQuestionId || '')
+          };
+        } catch (error) {
+          return defaultMemory();
+        }
+      }
+
+      let memory = loadMemory();
+
+      function saveMemory() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(memory));
+      }
+
+      function randomIndex(maxExclusive) {
+        if (window.crypto && window.crypto.getRandomValues) {
+          const arr = new Uint32Array(1);
+          window.crypto.getRandomValues(arr);
+          return arr[0] % maxExclusive;
+        }
+        return Math.floor(Math.random() * maxExclusive);
+      }
+
+      function shuffle(array) {
+        const arr = array.slice();
+        for (let i = arr.length - 1; i > 0; i -= 1) {
+          const j = randomIndex(i + 1);
+          const tmp = arr[i];
+          arr[i] = arr[j];
+          arr[j] = tmp;
+        }
+        return arr;
+      }
+
+      function categoryLabel(id) {
+        if (!WOMAI_DATA || !Array.isArray(WOMAI_DATA.categories)) return id;
+        const hit = WOMAI_DATA.categories.find(c => c.id === id);
+        return hit ? hit.label : id;
+      }
+
+      function pickOneByCategory(categoryId, excludedIds) {
+        const candidates = WOMAI_DATA.questions.filter(q => q.active && q.isCore && q.categoryId === categoryId && !excludedIds.has(q.id));
+        if (!candidates.length) return null;
+        return shuffle(candidates)[0];
+      }
+
+      function shuffledQuestion(question) {
+        return {
+          id: question.id,
+          categoryId: question.categoryId,
+          prompt: question.prompt,
+          correctChoiceId: question.correctChoiceId,
+          explanation: question.explanation,
+          active: question.active,
+          isCore: question.isCore,
+          choices: shuffle(question.choices.map(choice => ({ id: choice.id, text: choice.text })))
+        };
+      }
+
+      function avoidSameFirstQuestion(session) {
+        if (!Array.isArray(session) || session.length < 2) return session;
+        const lastFirst = memory.lastFirstQuestionId || '';
+        if (!lastFirst || session[0].id !== lastFirst) return session;
+        const swapIndex = 1 + randomIndex(session.length - 1);
+        const copy = session.slice();
+        const tmp = copy[0];
+        copy[0] = copy[swapIndex];
+        copy[swapIndex] = tmp;
+        return copy;
+      }
+
+      function buildSessionQuestions() {
+        const preferredOrder = ['ciemność', 'światło', 'eksperymenty', 'womai'];
+        const chosen = [];
+        const excluded = new Set();
+
+        preferredOrder.forEach(categoryId => {
+          if (chosen.length >= WOMAI_DATA.settings.sessionQuestionCount) return;
+          const question = pickOneByCategory(categoryId, excluded);
+          if (question) {
+            chosen.push(shuffledQuestion(question));
+            excluded.add(question.id);
+          }
+        });
+
+        const remaining = shuffle(
+          WOMAI_DATA.questions.filter(q => q.active && !excluded.has(q.id))
+        );
+
+        while (chosen.length < WOMAI_DATA.settings.sessionQuestionCount && remaining.length) {
+          const next = remaining.shift();
+          chosen.push(shuffledQuestion(next));
+          excluded.add(next.id);
+        }
+
+        const session = shuffle(chosen).slice(0, WOMAI_DATA.settings.sessionQuestionCount);
+        return avoidSameFirstQuestion(session);
+      }
+
+      function currentQuestion() {
+        return sessionQuestions[currentIndex];
+      }
+
+      function randomLead(ok) {
+        const pool = ok ? positiveFeedbackLeads : negativeFeedbackLeads;
+        return pool[randomIndex(pool.length)];
+      }
+
+      function correctCount() {
+        return sessionQuestions.reduce((sum, q) => sum + (answers[q.id] === q.correctChoiceId ? 1 : 0), 0);
+      }
+
+      function focusQuestionHeading() {
+        requestAnimationFrame(() => questionTitle.focus());
+      }
+
+      function focusFeedback() {
+        requestAnimationFrame(() => feedbackTitle.focus());
+      }
+
+      function focusSummary() {
+        requestAnimationFrame(() => summaryHeading.focus());
+      }
+
+      function persistFinishedSession() {
+        const correct = correctCount();
+        memory.sessionsCompleted += 1;
+        memory.totalCorrectAnswers += correct;
+        memory.totalQuestionsAnswered += sessionQuestions.length;
+        memory.lastPlayedAt = new Date().toISOString();
+        const seen = new Set(memory.seenQuestionIds);
+        sessionQuestions.forEach(question => seen.add(question.id));
+        memory.seenQuestionIds = Array.from(seen);
+        saveMemory();
+      }
+
+      function showError(text) {
+        errorBox.textContent = text;
+        errorBox.classList.remove('hidden');
+      }
+
+      function hideError() {
+        errorBox.textContent = '';
+        errorBox.classList.add('hidden');
+      }
+
+      function render() {
+        const showSummary = sessionQuestions.length > 0 && currentIndex >= sessionQuestions.length;
+        startView.classList.toggle('hidden', sessionQuestions.length > 0);
+        quizView.classList.toggle('hidden', sessionQuestions.length === 0 || showSummary);
+        summaryView.classList.toggle('hidden', !showSummary);
+
+        if (showSummary) {
+          scoreText.textContent = `${correctCount()} / ${sessionQuestions.length}`;
+          focusSummary();
+          return;
+        }
+
+        if (!sessionQuestions.length) return;
+
+        const question = currentQuestion();
+        const progress = Math.round(((currentIndex + 1) / sessionQuestions.length) * 100);
+
+        progressLabel.textContent = `Pytanie ${currentIndex + 1} z ${sessionQuestions.length}`;
+        progressFill.style.width = `${progress}%`;
+        sessionMeta.textContent = 'Nowa sesja, nowe pytania';
+        categoryBadge.textContent = categoryLabel(question.categoryId);
+        questionTitle.textContent = question.prompt;
+        choicesWrap.innerHTML = '';
+        feedbackBox.classList.add('hidden');
+
+        question.choices.forEach(choice => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'choice';
+          btn.textContent = choice.text;
+
+          const isSelected = selectedChoiceId === choice.id;
+          btn.setAttribute('aria-pressed', String(isSelected));
+          if (isSelected) btn.classList.add('selected');
+
+          if (feedbackShown) {
+            if (choice.id === question.correctChoiceId) btn.classList.add('correct');
+            if (isSelected && choice.id !== question.correctChoiceId) btn.classList.add('wrong');
+          }
+
+          btn.addEventListener('click', () => {
+            if (feedbackShown) return;
+            selectedChoiceId = choice.id;
+            selectionState.textContent = `Wybrano odpowiedź: ${choice.text}`;
+            nextBtn.disabled = false;
+            render();
+          });
+
+          choicesWrap.appendChild(btn);
+        });
+
+        if (feedbackShown) {
+          const ok = selectedChoiceId === question.correctChoiceId;
+          const correctText = question.choices.find(c => c.id === question.correctChoiceId)?.text || '';
+          feedbackTitle.textContent = randomLead(ok);
+          feedbackText.textContent = ok
+            ? question.explanation
+            : `Poprawna odpowiedź: ${correctText}. ${question.explanation}`;
+          feedbackBox.classList.remove('hidden');
+        }
+
+        nextBtn.textContent = feedbackShown
+          ? (currentIndex === sessionQuestions.length - 1 ? 'Zobacz podsumowanie' : 'Dalej')
+          : 'Sprawdź odpowiedź';
+        nextBtn.disabled = !selectedChoiceId;
+      }
+
+      function startSession() {
+        sessionQuestions = buildSessionQuestions();
+        currentIndex = 0;
+        selectedChoiceId = null;
+        feedbackShown = false;
+        answers = {};
+        if (sessionQuestions.length > 0) {
+          memory.lastFirstQuestionId = sessionQuestions[0].id;
+          saveMemory();
+        }
+        render();
+        focusQuestionHeading();
+      }
+
+      async function loadGuestData() {
+        try {
+          if (!ENDPOINT_URL || ENDPOINT_URL === 'WSTAW_TUTAJ_ADRES_ENDPOINTU') {
+            throw new Error('Najpierw wstaw adres endpointu w pliku gościa.');
+          }
+          const url = new URL(ENDPOINT_URL);
+          url.searchParams.set('action', 'guest');
+          const response = await fetch(url.toString(), {
+            method: 'GET',
+            headers: { 'Accept': 'application/json' }
+          });
+          const json = await response.json();
+          if (!response.ok || !json.ok || !json.data) {
+            throw new Error(json && json.error ? json.error : 'Nie udało się pobrać pytań.');
+          }
+          WOMAI_DATA = json.data;
+          if (!WOMAI_DATA.questions || WOMAI_DATA.questions.length < 4) {
+            throw new Error('Za mało aktywnych pytań do uruchomienia sesji.');
+          }
+          loadingBox.textContent = `Pobrano ${WOMAI_DATA.questions.length} pytań.`;
+          startBtn.disabled = false;
+          hideError();
+        } catch (error) {
+          loadingBox.textContent = 'Nie udało się pobrać pytań.';
+          showError(error.message || 'Nie udało się pobrać pytań.');
+          startBtn.disabled = true;
+        }
+      }
+
+      nextBtn.addEventListener('click', () => {
+        const question = currentQuestion();
+        if (!selectedChoiceId) return;
+
+        if (!feedbackShown) {
+          answers[question.id] = selectedChoiceId;
+          feedbackShown = true;
+          render();
+          focusFeedback();
+          return;
+        }
+
+        currentIndex += 1;
+        selectedChoiceId = null;
+        feedbackShown = false;
+        selectionState.textContent = '';
+
+        if (currentIndex >= sessionQuestions.length) {
+          persistFinishedSession();
+        }
+
+        render();
+        if (currentIndex < sessionQuestions.length) {
+          focusQuestionHeading();
+        }
+      });
+
+      startBtn.addEventListener('click', startSession);
+      restartBtn.addEventListener('click', startSession);
+      playAgainBtn.addEventListener('click', startSession);
+
+      helpBtn.addEventListener('click', () => {
+        const willShow = helpBox.hidden;
+        helpBox.hidden = !willShow;
+        helpBox.classList.toggle('hidden', !willShow);
+        helpBtn.setAttribute('aria-expanded', String(willShow));
+      });
+
+      loadGuestData();
+    }());
+  </script>
 </body>
 </html>
