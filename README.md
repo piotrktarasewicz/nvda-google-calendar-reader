@@ -2,27 +2,32 @@
 
 Polish version: [README_pl.md](README_pl.md)
 
-Google Calendar Reader is a test NVDA add-on for Windows. It allows users to sign in to Google Calendar, choose calendars, read events, and perform basic event operations from the keyboard.
+Google Calendar Reader is a test NVDA add-on for Windows. It allows users to sign in to Google Calendar, choose calendars, read events, and perform event operations directly from the keyboard.
 
 ## Project status
 
-This project is currently in a test version. It has not completed full Google verification yet, so it is not offered as a finished public tool for all users.
+This project is currently in a test version.
 
-If you want to test the add-on or ask about access, please contact the author.
+The add-on can be downloaded publicly, but Google sign-in works only for approved test users because the Google OAuth project is still in testing mode.
+
+If you want to test the add-on, please contact the author using the email address published on the project website:
+
+- https://ptprojects.app
 
 ## Features
 
 The add-on allows you to:
 
 - sign in to your Google account through a web browser,
-- read Google Calendar events with keyboard shortcuts for today and the next 7 days, with the option to choose another date,
+- read Google Calendar events for today and the next 7 days,
+- preview events for another selected day,
 - choose calendars used for reading, creating, and editing events,
 - switch between short mode and full mode,
 - hear when an event is currently in progress,
 - skip already finished events for the current day,
 - create events,
 - edit events,
-- delete events,
+- delete one or many events,
 - work through layered NVDA keyboard shortcuts.
 
 ## Requirements
@@ -31,6 +36,8 @@ The add-on allows you to:
 - NVDA 2023.1 or newer
 - Internet access
 - a Google account with Google Calendar enabled
+
+The current working version has been tested successfully with NVDA 2026.1.
 
 ## Installation
 
@@ -42,62 +49,47 @@ The add-on allows you to:
 
 To sign in to Google Calendar:
 
-1. Press:
-   `NVDA+Control+Shift+0`
-2. Your web browser will open.
-3. Sign in to your Google account and allow the required calendar access.
-4. After sign-in is complete, return to NVDA.
-5. Press:
-   `NVDA+Control+Shift+0` again.
+1. Press `NVDA+Shift+G`.
+2. Press `0`.
+3. Your web browser will open.
+4. Sign in to your Google account and allow the required calendar access.
+5. After sign-in is complete, return to NVDA.
+6. Press `NVDA+Shift+G`, then press `0` again.
 
 If sign-in was successful, the add-on will announce that you are signed in to Google Calendar.
 
-## Keyboard shortcuts
+## Layered keyboard shortcuts
 
-### Sign-in and status
+The add-on uses a layered command system.
 
-`NVDA+Control+Shift+0`
+First press:
 
-- starts Google sign-in if the user is not signed in,
-- checks sign-in status if the user is already signed in.
+`NVDA+Shift+G`
 
-### Event reading
+Then press one of the following keys:
 
-`NVDA+Control+Shift+1`  
-Read events for today
+- `0` — sign in or check sign-in status
+- `1` — read events for today
+- `2` — read events for tomorrow
+- `3` — read events for the day after tomorrow
+- `4` — read events in 3 days
+- `5` — read events in 4 days
+- `6` — read events in 5 days
+- `7` — read events in 6 days
+- `8` — switch reading mode
+- `9` — choose calendars
+- `N` — add an event
+- `E` — edit an event
+- `U` — delete events
+- `P` — show events for a selected day
 
-`NVDA+Control+Shift+2`  
-Read events for tomorrow
+## Direct shortcuts
 
-`NVDA+Control+Shift+3`  
-Read events for the day after tomorrow
+The add-on also provides direct shortcuts for the most important edit operations:
 
-`NVDA+Control+Shift+4`  
-Read events for 3 days from now
-
-`NVDA+Control+Shift+5`  
-Read events for 4 days from now
-
-`NVDA+Control+Shift+6`  
-Read events for 5 days from now
-
-`NVDA+Control+Shift+7`  
-Read events for 6 days from now
-
-### Speech mode
-
-`NVDA+Control+Shift+8`
-
-Switches between:
-
-- short mode,
-- full mode.
-
-### Calendar selection
-
-`NVDA+Control+Shift+9`
-
-Opens the calendar selection window and lets you choose which calendars should be included in spoken event output.
+- `NVDA+Control+Shift+N` — add an event
+- `NVDA+Control+Shift+E` — edit an event
+- `NVDA+Control+Shift+U` — delete events
 
 ## Choosing calendars
 
@@ -184,10 +176,7 @@ The current version uses an access scope that allows reading calendars and event
 
 ### The add-on says the user is not signed in
 
-Press:
-`NVDA+Control+Shift+0`
-
-and complete sign-in in the web browser.
+Press `NVDA+Shift+G`, then press `0`, and complete sign-in in the web browser.
 
 ### The browser opens but sign-in does not complete correctly
 
@@ -195,17 +184,11 @@ Check your Internet connection and make sure your Google account has access to G
 
 ### The add-on reads from the wrong calendar
 
-Press:
-`NVDA+Control+Shift+9`
-
-and check which calendars are selected.
+Press `NVDA+Shift+G`, then press `9`, and check which calendars are selected.
 
 ### The add-on reads too much or too little information
 
-Press:
-`NVDA+Control+Shift+8`
-
-to switch the speech mode.
+Press `NVDA+Shift+G`, then press `8` to switch the speech mode.
 
 ## Author
 
