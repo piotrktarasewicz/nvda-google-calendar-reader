@@ -2,27 +2,32 @@
 
 English version: [README.md](README.md)
 
-Google Calendar Reader to testowy dodatek do NVDA dla systemu Windows. Umożliwia logowanie do Google Calendar, wybór kalendarzy, odczytywanie wydarzeń oraz wykonywanie podstawowych operacji na wydarzeniach przy użyciu klawiatury.
+Google Calendar Reader to testowy dodatek do NVDA dla systemu Windows. Umożliwia logowanie do Google Calendar, wybór kalendarzy, odczytywanie wydarzeń oraz wykonywanie operacji na wydarzeniach przy użyciu klawiatury.
 
 ## Status projektu
 
-Projekt jest obecnie w wersji testowej. Nie przeszedł jeszcze pełnej weryfikacji Google, dlatego nie jest udostępniany publicznie jako gotowe narzędzie dla każdego użytkownika.
+Projekt jest obecnie w wersji testowej.
 
-Jeśli chcesz przetestować dodatek albo porozmawiać o dostępie, skontaktuj się z autorem.
+Dodatek może być pobrany publicznie, ale logowanie Google działa tylko dla zatwierdzonych użytkowników testowych, ponieważ projekt Google OAuth nadal działa w trybie testowym.
+
+Jeśli chcesz przetestować dodatek, skontaktuj się z autorem przez adres e-mail podany na stronie projektu:
+
+- https://ptprojects.app
 
 ## Funkcje
 
 Dodatek umożliwia:
 
 - logowanie do konta Google przez przeglądarkę,
-- odczytywanie przy pomocy skrótów wydarzeń z Google Calendar na dziś i kolejne 7 dni, z możliwością wyboru innej daty,
+- odczytywanie wydarzeń z Google Calendar na dziś i kolejne 7 dni,
+- podgląd wydarzeń dla innego, wybranego dnia,
 - wybór kalendarzy używanych przy odczycie, zapisie i edycji,
 - przełączanie między trybem krótkim i pełnym,
 - informowanie o wydarzeniach trwających,
 - pomijanie zakończonych wydarzeń z bieżącego dnia,
 - tworzenie wydarzeń,
 - edytowanie wydarzeń,
-- usuwanie wydarzeń,
+- usuwanie jednego lub wielu wydarzeń,
 - działanie z poziomu warstwowych skrótów klawiaturowych NVDA.
 
 ## Wymagania
@@ -31,6 +36,8 @@ Dodatek umożliwia:
 - NVDA 2023.1 lub nowszy
 - dostęp do Internetu
 - konto Google z włączonym Google Calendar
+
+Aktualna działająca wersja została pomyślnie przetestowana z NVDA 2026.1.
 
 ## Instalacja
 
@@ -42,62 +49,47 @@ Dodatek umożliwia:
 
 Aby zalogować się do Google Calendar:
 
-1. Naciśnij:
-   `NVDA+Control+Shift+0`
-2. Otworzy się przeglądarka internetowa.
-3. Zaloguj się do konta Google i zaakceptuj wymagany dostęp do kalendarza.
-4. Po zakończeniu logowania wróć do NVDA.
-5. Naciśnij ponownie:
-   `NVDA+Control+Shift+0`
+1. Naciśnij `NVDA+Shift+G`.
+2. Naciśnij `0`.
+3. Otworzy się przeglądarka internetowa.
+4. Zaloguj się do konta Google i zaakceptuj wymagany dostęp do kalendarza.
+5. Po zakończeniu logowania wróć do NVDA.
+6. Naciśnij ponownie `NVDA+Shift+G`, a następnie `0`.
 
 Jeśli logowanie zakończyło się powodzeniem, dodatek ogłosi, że użytkownik jest zalogowany do Google Calendar.
 
-## Skróty klawiaturowe
+## Warstwowe skróty klawiaturowe
 
-### Logowanie i status
+Dodatek używa warstwowego systemu poleceń.
 
-`NVDA+Control+Shift+0`
+Najpierw naciśnij:
 
-- rozpoczyna logowanie do Google, jeśli użytkownik nie jest zalogowany,
-- sprawdza stan logowania, jeśli użytkownik jest już zalogowany.
+`NVDA+Shift+G`
 
-### Odczyt wydarzeń
+Następnie naciśnij jeden z poniższych klawiszy:
 
-`NVDA+Control+Shift+1`  
-Odczyt wydarzeń na dziś
+- `0` — logowanie lub sprawdzenie stanu logowania
+- `1` — odczyt wydarzeń na dziś
+- `2` — odczyt wydarzeń na jutro
+- `3` — odczyt wydarzeń na pojutrze
+- `4` — odczyt wydarzeń za 3 dni
+- `5` — odczyt wydarzeń za 4 dni
+- `6` — odczyt wydarzeń za 5 dni
+- `7` — odczyt wydarzeń za 6 dni
+- `8` — przełączanie trybu odczytu
+- `9` — wybór kalendarzy
+- `N` — dodawanie wydarzenia
+- `E` — edycja wydarzenia
+- `U` — usuwanie wydarzeń
+- `P` — pokazanie wydarzeń dla wybranego dnia
 
-`NVDA+Control+Shift+2`  
-Odczyt wydarzeń na jutro
+## Skróty bezpośrednie
 
-`NVDA+Control+Shift+3`  
-Odczyt wydarzeń na pojutrze
+Dodatek udostępnia także bezpośrednie skróty dla najważniejszych operacji edycji:
 
-`NVDA+Control+Shift+4`  
-Odczyt wydarzeń za 3 dni
-
-`NVDA+Control+Shift+5`  
-Odczyt wydarzeń za 4 dni
-
-`NVDA+Control+Shift+6`  
-Odczyt wydarzeń za 5 dni
-
-`NVDA+Control+Shift+7`  
-Odczyt wydarzeń za 6 dni
-
-### Tryb odczytu
-
-`NVDA+Control+Shift+8`
-
-Przełącza tryb odczytu między:
-
-- trybem krótkim,
-- trybem pełnym.
-
-### Wybór kalendarzy
-
-`NVDA+Control+Shift+9`
-
-Otwiera okno wyboru kalendarzy, które mają być uwzględniane podczas odczytu wydarzeń.
+- `NVDA+Control+Shift+N` — dodawanie wydarzenia
+- `NVDA+Control+Shift+E` — edycja wydarzenia
+- `NVDA+Control+Shift+U` — usuwanie wydarzeń
 
 ## Wybór kalendarzy
 
@@ -184,10 +176,7 @@ Aktualna wersja używa zakresu dostępu pozwalającego na odczyt kalendarzy i wy
 
 ### Dodatek mówi, że użytkownik nie jest zalogowany
 
-Naciśnij:
-`NVDA+Control+Shift+0`
-
-i wykonaj logowanie w przeglądarce.
+Naciśnij `NVDA+Shift+G`, a następnie `0`, i wykonaj logowanie w przeglądarce.
 
 ### Otwiera się przeglądarka, ale logowanie nie kończy się poprawnie
 
@@ -195,17 +184,11 @@ Sprawdź połączenie z Internetem oraz upewnij się, że konto Google ma dostę
 
 ### Dodatek nie czyta wydarzeń z właściwego kalendarza
 
-Naciśnij:
-`NVDA+Control+Shift+9`
-
-i sprawdź, które kalendarze są zaznaczone.
+Naciśnij `NVDA+Shift+G`, a następnie `9`, i sprawdź, które kalendarze są zaznaczone.
 
 ### Dodatek czyta zbyt dużo lub zbyt mało informacji
 
-Naciśnij:
-`NVDA+Control+Shift+8`
-
-aby przełączyć tryb odczytu.
+Naciśnij `NVDA+Shift+G`, a następnie `8`, aby przełączyć tryb odczytu.
 
 ## Autor
 
