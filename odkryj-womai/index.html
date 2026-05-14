@@ -61,7 +61,7 @@
   <main class="wrap">
     <section class="card">
       <div class="topbar">
-        <div class="badge">Odkryj Womai</div>
+        <div class="badge">Odkryj WOMAI</div>
         <button id="helpBtn" type="button" aria-expanded="false" aria-controls="helpBox">Pomoc</button>
       </div>
 
@@ -218,14 +218,54 @@
         return arr;
       }
 
+      function sessionQuestionCount() {
+        const configured = WOMAI_DATA && WOMAI_DATA.settings ? Number(WOMAI_DATA.settings.sessionQuestionCount) : 4;
+        return Number.isFinite(configured) && configured > 0 ? configured : 4;
+      }
+
+      function normalizedChoices(question) {
+        if (!question || !Array.isArray(question.choices)) return [];
+        return question.choices
+          .filter(choice => choice && choice.id && String(choice.text || '').trim())
+          .map(choice => ({ id: String(choice.id), text: String(choice.text).trim() }));
+      }
+
+      function isReadyQuestion(question) {
+        const choices = normalizedChoices(question);
+        return Boolean(
+          question &&
+          question.active &&
+          String(question.id || '').trim() &&
+          String(question.categoryId || '').trim() &&
+          String(question.prompt || '').trim() &&
+          String(question.explanation || '').trim() &&
+          choices.length >= 2 &&
+          choices.some(choice => choice.id === question.correctChoiceId)
+        );
+      }
+
+      function availableQuestions() {
+        if (!WOMAI_DATA || !Array.isArray(WOMAI_DATA.questions)) return [];
+        return WOMAI_DATA.questions.filter(isReadyQuestion).map(question => ({
+          id: String(question.id),
+          categoryId: String(question.categoryId),
+          prompt: String(question.prompt).trim(),
+          correctChoiceId: String(question.correctChoiceId),
+          explanation: String(question.explanation).trim(),
+          active: Boolean(question.active),
+          isCore: Boolean(question.isCore),
+          choices: normalizedChoices(question)
+        }));
+      }
+
       function categoryLabel(id) {
         if (!WOMAI_DATA || !Array.isArray(WOMAI_DATA.categories)) return id;
         const hit = WOMAI_DATA.categories.find(c => c.id === id);
         return hit ? hit.label : id;
       }
 
-      function pickOneByCategory(categoryId, excludedIds) {
-        const candidates = WOMAI_DATA.questions.filter(q => q.active && q.isCore && q.categoryId === categoryId && !excludedIds.has(q.id));
+      function pickOneByCategory(categoryId, excludedIds, questionPool) {
+        const candidates = questionPool.filter(q => q.isCore && q.categoryId === categoryId && !excludedIds.has(q.id));
         if (!candidates.length) return null;
         return shuffle(candidates)[0];
       }
@@ -257,12 +297,18 @@
 
       function buildSessionQuestions() {
         const preferredOrder = ['ciemność', 'światło', 'eksperymenty', 'womai'];
+        const allReadyQuestions = availableQuestions();
+        const count = sessionQuestionCount();
+        const seenQuestionIds = new Set(memory.seenQuestionIds);
+        let questionPool = allReadyQuestions.filter(question => !seenQuestionIds.has(question.id));
+        if (questionPool.length < count) questionPool = allReadyQuestions;
+
         const chosen = [];
         const excluded = new Set();
 
         preferredOrder.forEach(categoryId => {
-          if (chosen.length >= WOMAI_DATA.settings.sessionQuestionCount) return;
-          const question = pickOneByCategory(categoryId, excluded);
+          if (chosen.length >= count) return;
+          const question = pickOneByCategory(categoryId, excluded, questionPool);
           if (question) {
             chosen.push(shuffledQuestion(question));
             excluded.add(question.id);
@@ -270,16 +316,25 @@
         });
 
         const remaining = shuffle(
-          WOMAI_DATA.questions.filter(q => q.active && !excluded.has(q.id))
+          questionPool.filter(q => !excluded.has(q.id))
         );
 
-        while (chosen.length < WOMAI_DATA.settings.sessionQuestionCount && remaining.length) {
+        while (chosen.length < count && remaining.length) {
           const next = remaining.shift();
           chosen.push(shuffledQuestion(next));
           excluded.add(next.id);
         }
 
-        const session = shuffle(chosen).slice(0, WOMAI_DATA.settings.sessionQuestionCount);
+        if (chosen.length < count) {
+          const fallback = shuffle(allReadyQuestions.filter(q => !excluded.has(q.id)));
+          while (chosen.length < count && fallback.length) {
+            const next = fallback.shift();
+            chosen.push(shuffledQuestion(next));
+            excluded.add(next.id);
+          }
+        }
+
+        const session = shuffle(chosen).slice(0, count);
         return avoidSameFirstQuestion(session);
       }
 
@@ -316,7 +371,7 @@
         memory.lastPlayedAt = new Date().toISOString();
         const seen = new Set(memory.seenQuestionIds);
         sessionQuestions.forEach(question => seen.add(question.id));
-        memory.seenQuestionIds = Array.from(seen);
+        memory.seenQuestionIds = Array.from(seen).slice(-200);
         saveMemory();
       }
 
@@ -427,15 +482,17 @@
             throw new Error(json && json.error ? json.error : 'Nie udało się pobrać pytań.');
           }
           WOMAI_DATA = json.data;
-          if (!WOMAI_DATA.questions || WOMAI_DATA.questions.length < 4) {
-            throw new Error('Za mało aktywnych pytań do uruchomienia sesji.');
+          const readyQuestions = availableQuestions();
+          const requiredCount = sessionQuestionCount();
+          if (readyQuestions.length < requiredCount) {
+            throw new Error(`Za mało gotowych pytań do uruchomienia sesji. Potrzeba ${requiredCount}, dostępne: ${readyQuestions.length}.`);
           }
-          loadingBox.textContent = `Pobrano ${WOMAI_DATA.questions.length} pytań.`;
+          loadingBox.textContent = `Pobrano ${readyQuestions.length} gotowych pytań.`;
           startBtn.disabled = false;
           hideError();
         } catch (error) {
           loadingBox.textContent = 'Nie udało się pobrać pytań.';
-          showError(error.message || 'Nie udało się pobrać pytań.');
+          showError(error.message || 'Nie udało się pobrać pytań. Spróbuj ponownie za chwilę.');
           startBtn.disabled = true;
         }
       }
