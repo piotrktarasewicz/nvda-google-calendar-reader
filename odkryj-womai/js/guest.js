@@ -178,6 +178,10 @@
     requestAnimationFrame(() => questionTitle.focus());
   }
 
+  function focusNextButton() {
+    requestAnimationFrame(() => nextBtn.focus());
+  }
+
   function focusFeedback() {
     requestAnimationFrame(() => feedbackTitle.focus());
   }
@@ -255,6 +259,7 @@
         selectionState.textContent = `Wybrano odpowiedź: ${choice.text}`;
         nextBtn.disabled = false;
         render();
+        focusNextButton();
       });
 
       choicesWrap.appendChild(btn);
