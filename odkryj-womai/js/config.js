@@ -6,6 +6,7 @@ window.WOMAI_CONFIG = {
     preferredCategoryOrder: ['ciemność', 'światło', 'eksperymenty', 'womai'],
     storageKey: 'womai_guest_progress_v2',
     fallbackDataUrl: './data/fallback-questions.json',
+    factsDataUrl: './data/facts.json',
     requestTimeoutMs: 10000
   },
   admin: {
