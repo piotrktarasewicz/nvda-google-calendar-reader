@@ -21,6 +21,10 @@ button { border: 1px solid var(--border); cursor: pointer; border-radius: 16px; 
 button.primary { background: linear-gradient(135deg,var(--accent) 0%,var(--accent-warm) 100%); color: #160f1a; border-color: transparent; font-weight: 700; }
 button:focus-visible { outline: 3px solid var(--accent-alt); outline-offset: 3px; }
 button[disabled] { opacity: .55; cursor: not-allowed; }
+.start-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 24px; }
+.option-card { border: 1px solid var(--border); border-radius: 22px; padding: 18px; background: var(--surface-soft); }
+.option-card h2 { margin-top: 0; }
+.option-card button { margin-top: 18px; width: 100%; }
 .progress-top { margin-bottom: 24px; }
 .progress-meta { display: flex; justify-content: space-between; gap: 12px; align-items: center; font-size: 14px; color: var(--muted); margin-bottom: 8px; }
 .progress-bar { height: 8px; background: rgba(255,255,255,.12); border-radius: 999px; overflow: hidden; }
@@ -32,8 +36,9 @@ button[disabled] { opacity: .55; cursor: not-allowed; }
 .choice.wrong { background: rgba(255,157,167,.12); border-color: var(--danger); }
 .feedback { margin-top: 24px; padding: 18px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface-soft); }
 .feedback-title { font-weight: 700; margin: 0 0 10px; }
-.summary-box { margin-top: 28px; padding: 22px; border-radius: 22px; border: 1px solid var(--border); background: linear-gradient(135deg,rgba(255,79,159,.12),rgba(255,209,102,.12)); }
+.summary-box, .fact-card { margin-top: 28px; padding: 22px; border-radius: 22px; border: 1px solid var(--border); background: linear-gradient(135deg,rgba(255,79,159,.12),rgba(255,209,102,.12)); }
 .help-box { margin-top: 12px; padding: 16px; border-radius: 18px; border: 1px solid var(--border); background: var(--surface-soft); }
 .small-note { font-size: .95rem; color: var(--muted); }
 .error-box { margin-top: 18px; padding: 16px; border: 1px solid rgba(255,157,167,.5); border-radius: 18px; background: rgba(255,157,167,.12); }
 .site-footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.95rem; }
+@media (max-width: 760px) { .start-options { grid-template-columns: 1fr; } }
