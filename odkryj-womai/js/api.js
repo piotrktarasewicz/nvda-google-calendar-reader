@@ -95,6 +95,25 @@
     }
   }
 
+  async function getFactsData() {
+    const factsDataUrl = config.guest?.factsDataUrl;
+    if (!factsDataUrl) {
+      return { facts: [] };
+    }
+
+    const factsUrl = new URL(factsDataUrl, window.location.href).toString();
+    const { response, json } = await fetchJsonWithTimeout(factsUrl, {
+      method: 'GET',
+      headers: { 'Accept': 'application/json' }
+    }, timeoutMs(config.guest));
+
+    if (!response.ok || !json || !Array.isArray(json.facts)) {
+      throw new Error('Nie udało się pobrać ciekawostek.');
+    }
+
+    return json;
+  }
+
   async function requestAdminJson(endpoint, token, method, action, body) {
     if (!endpoint) throw new Error('Brak adresu endpointu.');
     if (!token) throw new Error('Brak tokenu.');
@@ -123,6 +142,7 @@
 
   window.WOMAI_API = {
     getGuestData,
+    getFactsData,
     requestAdminJson
   };
 }());
