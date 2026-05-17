@@ -178,8 +178,13 @@
     requestAnimationFrame(() => questionTitle.focus());
   }
 
-  function focusNextButton() {
-    requestAnimationFrame(() => nextBtn.focus());
+  function focusSelectedChoice() {
+    requestAnimationFrame(() => {
+      const selectedButton = Array.from(choicesWrap.querySelectorAll('.choice')).find(
+        button => button.dataset.choiceId === selectedChoiceId
+      );
+      if (selectedButton) selectedButton.focus();
+    });
   }
 
   function focusFeedback() {
@@ -242,6 +247,7 @@
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'choice';
+      btn.dataset.choiceId = choice.id;
       btn.textContent = choice.text;
 
       const isSelected = selectedChoiceId === choice.id;
@@ -259,7 +265,7 @@
         selectionState.textContent = `Wybrano odpowiedź: ${choice.text}`;
         nextBtn.disabled = false;
         render();
-        focusNextButton();
+        focusSelectedChoice();
       });
 
       choicesWrap.appendChild(btn);
