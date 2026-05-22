@@ -9,67 +9,91 @@ body{font-family:sans-serif;padding:1rem;}
 .card{border:1px solid #ccc;padding:1rem;border-radius:1rem;}
 .duty{border:1px solid #ccc;margin-top:0.5rem;padding:0.5rem;}
 a{display:block;margin-top:1rem;}
+.error{margin-top:1rem;}
 </style>
 </head>
 <body>
 
 <div class="card">
 <h1>Wyniki</h1>
-<p id="status">Wczytywanie…</p>
+<p id="status" aria-live="polite">Wczytywanie…</p>
 
 <div id="list"></div>
 
 <a href="index.html">Wróć do wyboru dnia</a>
 
-<div id="err"></div>
+<div id="err" class="error" aria-live="assertive"></div>
 </div>
 
 <script>
-function normalizeDate(v){
-  const r=String(v||"").trim();
-  if(!r)return null;
-  if(/^\d{4}-\d{2}-\d{2}$/.test(r))return r;
-
-  let m=r.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-  if(m)return `${m[3]}-${m[2].padStart(2,"0")}-${m[1].padStart(2,"0")}`;
-
-  m=r.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
-  if(m)return `${m[3]}-${m[2].padStart(2,"0")}-${m[1].padStart(2,"0")}`;
-
-  return null;
-}
-
-function normalizeTime(v){
-  return String(v||"").replace(".",":");
-}
+const DATA_URL = "https://script.google.com/macros/s/AKfycbyYg83UTU_gmSqf1FaOxmF7AhKNJ6IJzCq599RWm4g59arFdseElixo8gg_oQExPR2Mqw/exec";
+const ACCESS_TOKEN = "Pjetia21Ag7X3t*";
 
 function today(){
   const d=new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
 }
 
-function split(l){return l.includes(";")?l.split(";"):l.split(",");}
+function friendly(d){
+  const [y,m,da]=d.split("-").map(Number);
+  return new Intl.DateTimeFormat("pl-PL",{weekday:"long",day:"numeric",month:"long",year:"numeric"})
+    .format(new Date(y,m-1,da));
+}
 
-function parse(text){
-  const lines=text.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
-  if(lines.length<2)return [];
+function loadSchedule(){
+  return new Promise((resolve,reject)=>{
+    if(!DATA_URL || DATA_URL==="TU_WKLEJ_ADRES_APPS_SCRIPT_WEB_APP"){
+      reject(new Error("Brak adresu Apps Script Web App w pliku results.html."));
+      return;
+    }
 
-  const header=split(lines[0]);
-  const row=split(lines[1]);
+    if(!ACCESS_TOKEN || ACCESS_TOKEN==="ZMIEŃ_TEN_TOKEN_NA_WŁASNY_DŁUGI_TEKST"){
+      reject(new Error("Brak ustawionego tokenu dostępu w pliku results.html."));
+      return;
+    }
 
-  const out=[];
-  for(let i=0;i<header.length;i++){
-    const d=normalizeDate(header[i]);
-    if(!d)continue;
+    const callbackName="grafikCallback_"+Date.now()+"_"+Math.floor(Math.random()*1000000);
+    const script=document.createElement("script");
+    const separator=DATA_URL.includes("?")?"&":"?";
 
-    const s=(row[i]||"").toLowerCase().trim();
-    const e=(row[i+1]||"").toLowerCase().trim();
+    window[callbackName]=(payload)=>{
+      cleanup();
 
-    if(!s||s==="off"||s==="v")continue;
+      if(!payload || payload.ok!==true){
+        reject(new Error(payload && payload.error ? payload.error : "Nie udało się pobrać grafiku."));
+        return;
+      }
 
-    out.push({date:d,start:normalizeTime(s),end:normalizeTime(e)});
-  }
-  return out;
+      resolve(Array.isArray(payload.items)?payload.items:[]);
+    };
+
+    function cleanup(){
+      delete window[callbackName];
+      if(script.parentNode){
+        script.parentNode.removeChild(script);
+      }
+    }
+
+    script.onerror=()=>{
+      cleanup();
+      reject(new Error("Błąd połączenia z Apps Script."));
+    };
+
+    script.src=DATA_URL+
+      separator+
+      "token="+encodeURIComponent(ACCESS_TOKEN)+
+      "&callback="+encodeURIComponent(callbackName)+
+      "&t="+encodeURIComponent(String(Date.now()));
+
+    document.head.appendChild(script);
+  });
+}
+
+function addDutyLine(text){
+  const div=document.createElement("div");
+  div.className="duty";
+  div.textContent=text;
+  list.appendChild(div);
 }
 
 const params=new URLSearchParams(location.search);
@@ -80,32 +104,45 @@ const list=document.getElementById("list");
 const err=document.getElementById("err");
 
 if(!day){
-  err.textContent="Brak dnia";
+  status.textContent="";
+  err.textContent="Brak dnia.";
+}else if(day<today()){
+  status.textContent="";
+  err.textContent="Nie można cofnąć.";
 }else{
-  fetch("grafik.csv",{cache:"no-store"})
-  .then(r=>{
-    if(!r.ok)throw new Error("Błąd wczytywania grafiku");
-    return r.text();
-  })
-  .then(text=>{
-    const rows=parse(text);
-
-    if(day<today()){
-      err.textContent="Nie można cofnąć";
-      status.textContent="";
-      return;
-    }
-
-    const d=rows.filter(r=>r.date===day);
+  loadSchedule()
+  .then(rows=>{
+    const dayRows=rows.filter(r=>r.date===day);
 
     status.textContent="Grafik wczytany.";
 
-    if(!d.length){
-      list.textContent="Brak dyżuru";
+    if(!dayRows.length){
+      list.textContent="Brak danych dla dnia: "+friendly(day)+".";
       return;
     }
 
-    list.innerHTML=d.map(x=>`<div class="duty">${x.start}–${x.end}</div>`).join("");
+    const visibleRows=dayRows.filter(r=>r.status==="work" || r.status==="l4");
+
+    if(!visibleRows.length){
+      list.textContent="Brak dyżuru.";
+      return;
+    }
+
+    list.textContent="";
+
+    visibleRows.forEach(row=>{
+      if(row.status==="l4"){
+        addDutyLine(`${row.title || "l4"}, cały dzień, ${row.location || ""}`.trim());
+        return;
+      }
+
+      const title=row.title || "Robota";
+      const start=row.start || "";
+      const end=row.end || "";
+      const location=row.location || "";
+
+      addDutyLine(`${title}, ${start}–${end}, ${location}`.trim());
+    });
   })
   .catch(e=>{
     status.textContent="";
