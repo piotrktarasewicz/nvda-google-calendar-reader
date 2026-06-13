@@ -19,6 +19,7 @@ odkryj-womai/
   admin/
     index.html
   assets/
+    logo-womai-white.png
     logo-placeholder.svg
   css/
     theme.css
@@ -49,13 +50,17 @@ Gdy będzie gotowa docelowa identyfikacja wizualna, najpierw zmień zmienne w `t
 
 ## Logo
 
-Na razie projekt ma tylko miejsce na logo. Docelowy plik logo można dodać do:
+Panel gościa korzysta obecnie z prawdziwego pliku logo:
 
 ```text
-assets/
+assets/logo-womai-white.png
 ```
 
-Po dodaniu prawdziwego logo trzeba podmienić nagłówki w `index.html` i `admin/index.html` albo zmienić CSS klasy `brand-logo-placeholder`.
+Ten plik jest wczytywany w `odkryj-womai/index.html` przez element `img.brand-logo`. Jeśli logo ma zostać zmienione, najprościej podmienić plik `assets/logo-womai-white.png` na nową wersję o tej samej nazwie albo zmienić ścieżkę w `index.html`.
+
+Plik `assets/logo-placeholder.svg` może pozostać jako techniczny placeholder lub zapas dla miejsc, które nie mają jeszcze docelowego logo.
+
+Panel administratora nadal używa klasy `brand-logo-placeholder`, więc jego nagłówek można później osobno dostosować do prawdziwego logo.
 
 ## Dostępność
 
