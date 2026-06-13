@@ -47,10 +47,29 @@ button, input, select, textarea { font: inherit; }
 }
 .brand { display: inline-flex; align-items: center; gap: 14px; }
 .brand-name { font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 124px;
+  min-height: 58px;
+  padding: 8px 10px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,200,20,.38);
+  background: #000000;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+}
 .brand-logo {
-  width: 86px;
-  height: auto;
+  width: 112px;
+  max-height: 42px;
+  object-fit: contain;
   display: block;
+}
+.brand-logo-fallback {
+  color: #ffffff;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
 }
 .brand-logo-placeholder {
   width: 48px;
